@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}About Us | AI Job Portal{% endblock %}
+
+{% block extra_css %}
+<style>
+    .about-container {
+        max-width: 900px;
+        margin: 4rem auto;
+        padding: 0 1.5rem;
+    }
+    .hero-v {
+        text-align: center;
+        margin-bottom: 5rem;
+    }
+    .hero-v h1 { font-size: 3.5rem; margin-bottom: 1.5rem; }
+    .grid-2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 3rem;
+        margin-bottom: 5rem;
+    }
+    @media (max-width: 768px) { .grid-2 { grid-template-columns: 1fr; } }
+    .story-card {
+        padding: 2.5rem;
+    }
+    .mission-badge {
+        display: inline-block;
+        background: rgba(139, 92, 246, 0.1);
+        color: var(--primary-light);
+        padding: 0.5rem 1rem;
+        border-radius: 50px;
+        font-weight: 700;
+        margin-bottom: 1.5rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="about-container">
+    <div class="hero-v">
+        <span class="badge">Our Journey</span>
+        <h1>Revolutionizing Recruitment with AI</h1>
+        <p>We bridge the gap between human potential and professional opportunity using advanced intelligence.</p>
+    </div>
+
+    <div class="grid-2">
+        <div class="glass-card story-card">
+            <div class="mission-badge">Our Mission</div>
+            <h3>Empowering Every Career</h3>
+            <p style="color: var(--text-dim);">
+                To provide every professional with a personalized AI career coach that identifies their unique strengths 
+                and unlocks paths they never thought possible.
+            </p>
+        </div>
+        <div class="glass-card story-card">
+            <div class="mission-badge">Our Vision</div>
+            <h3>The Future of Work</h3>
+            <p style="color: var(--text-dim);">
+                A world where the hiring process is transparent, skills-based, and powered by objective AI insights 
+                rather than traditional biases.
+            </p>
+        </div>
+    </div>
+
+    <div class="glass-card" style="text-align: center; padding: 4rem 2rem;">
+        <h2>The Team Behind the Tech</h2>
+        <p style="color: var(--text-dim); margin: 1.5rem 0 2rem;">Developed as a Final Year MCA Project to showcase the synergy between AI and Web Development.</p>
+        <div style="display: flex; justify-content: center; gap: 2rem;">
+            <div class="team-member">
+                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" style="width: 80px; border-radius: 50%; margin-bottom: 1rem;">
+                <h4>Innovation Team</h4>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

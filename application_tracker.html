@@ -1,0 +1,223 @@
+{% extends 'dashboard/base_dashboard.html' %}
+{% load static %}
+
+{% block title %}Application Tracker | AI Job Portal Hub{% endblock %}
+{% block page_title %}My Applications{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'dashboard/dashboard_style.css' %}">
+<style>
+    .kanban-board {
+        display: flex;
+        gap: 24px;
+        overflow-x: auto;
+        padding: 10px 0 30px 0;
+        min-height: 75vh;
+        scroll-behavior: smooth;
+    }
+    .kanban-column {
+        flex: 1;
+        min-width: 320px;
+        background: var(--bg-light);
+        border-radius: 24px;
+        padding: 24px;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        border: 1px solid var(--border-color);
+        box-shadow: var(--shadow-sm);
+        transition: var(--transition);
+    }
+    [data-theme="dark"] .kanban-column { background: rgba(30, 41, 59, 0.4); }
+    
+    .column-header {
+        font-weight: 700;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-bottom: 15px;
+        margin-bottom: 5px;
+        border-bottom: 3px solid transparent;
+        font-size: 1.1rem;
+    }
+    .c-applied { border-bottom-color: #3b82f6; color: #3b82f6; }
+    .c-interview { border-bottom-color: #f59e0b; color: #f59e0b; }
+    .c-rejected { border-bottom-color: #ef4444; color: #ef4444; }
+    .c-selected { border-bottom-color: #10b981; color: #10b981; }
+    
+    .kanban-card {
+        background: var(--card-bg);
+        border: 1px solid var(--border-color);
+        padding: 20px;
+        border-radius: 16px;
+        box-shadow: var(--shadow-md);
+        cursor: grab;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+    }
+    .kanban-card:hover {
+        transform: scale(1.02) translateY(-5px);
+        box-shadow: var(--shadow-lg);
+        border-color: var(--primary);
+    }
+    .kanban-card:active { cursor: grabbing; }
+    .kanban-card h4 { margin-bottom: 8px; font-size: 1.05rem; font-weight: 700; color: var(--text-main); }
+    .kanban-card p { font-size: 0.9rem; color: var(--text-muted); margin-bottom: 15px; }
+    .card-meta { 
+        display: flex; 
+        justify-content: space-between; 
+        font-size: 0.8rem; 
+        color: var(--text-muted);
+        border-top: 1px solid var(--border-color);
+        padding-top: 12px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="kanban-board">
+    
+    <!-- Applied Column -->
+    <div class="kanban-column" id="col-applied" data-status="Applied">
+        <div class="column-header c-applied">
+            <span>Applied</span>
+            <span class="badge" id="badge-applied" style="position:static; background:#3b82f6;">0</span>
+        </div>
+        {% for app in applications %}
+            {% if app.status == 'Applied' %}
+            <div class="kanban-card" data-app-id="{{ app.id }}" draggable="true">
+                <h4>{{ app.job.title }}</h4>
+                <p>{{ app.job.company }}</p>
+                <div class="card-meta">
+                    <span><i class="fa-regular fa-clock"></i> {{ app.applied_at|timesince }} ago</span>
+                    <span><i class="fa-solid fa-location-dot"></i> {{ app.job.location }}</span>
+                </div>
+            </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+
+    <!-- Interview Column -->
+    <div class="kanban-column" id="col-interview" data-status="Interview">
+        <div class="column-header c-interview">
+            <span>Interview</span>
+            <span class="badge" id="badge-interview" style="position:static; background:#f59e0b;">0</span>
+        </div>
+        {% for app in applications %}
+            {% if app.status == 'Interview' %}
+            <div class="kanban-card" data-app-id="{{ app.id }}" draggable="true">
+                <h4>{{ app.job.title }}</h4>
+                <p>{{ app.job.company }}</p>
+                <div class="card-meta">
+                    <span style="color:#f59e0b; font-weight:600;"><i class="fa-regular fa-clock"></i> {{ app.applied_at|timesince }} ago</span>
+                    <span><i class="fa-solid fa-location-dot"></i> {{ app.job.location }}</span>
+                </div>
+            </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+
+    <!-- Rejected Column -->
+    <div class="kanban-column" id="col-rejected" data-status="Rejected">
+        <div class="column-header c-rejected">
+            <span>Rejected</span>
+            <span class="badge" id="badge-rejected" style="position:static; background:#ef4444;">0</span>
+        </div>
+        {% for app in applications %}
+            {% if app.status == 'Rejected' %}
+            <div class="kanban-card" data-app-id="{{ app.id }}" draggable="true">
+                <h4>{{ app.job.title }}</h4>
+                <p>{{ app.job.company }}</p>
+                <div class="card-meta">
+                    <span><i class="fa-solid fa-xmark"></i> Rejected</span>
+                    <span><i class="fa-solid fa-location-dot"></i> {{ app.job.location }}</span>
+                </div>
+            </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+
+    <!-- Selected Column -->
+    <div class="kanban-column" id="col-selected" data-status="Selected">
+        <div class="column-header c-selected">
+            <span>Selected</span>
+            <span class="badge" id="badge-selected" style="position:static; background:#10b981;">0</span>
+        </div>
+        {% for app in applications %}
+            {% if app.status == 'Selected' %}
+            <div class="kanban-card" data-app-id="{{ app.id }}" draggable="true">
+                <h4>{{ app.job.title }}</h4>
+                <p>{{ app.job.company }}</p>
+                <div class="card-meta">
+                    <span style="color:#10b981; font-weight:600;"><i class="fa-solid fa-check"></i> Selected</span>
+                    <span><i class="fa-solid fa-location-dot"></i> {{ app.job.location }}</span>
+                </div>
+            </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    const cards = document.querySelectorAll('.kanban-card');
+    const columns = document.querySelectorAll('.kanban-column');
+
+    function updateCounts() {
+        document.getElementById('badge-applied').innerText = document.querySelectorAll('#col-applied .kanban-card').length;
+        document.getElementById('badge-interview').innerText = document.querySelectorAll('#col-interview .kanban-card').length;
+        document.getElementById('badge-rejected').innerText = document.querySelectorAll('#col-rejected .kanban-card').length;
+        document.getElementById('badge-selected').innerText = document.querySelectorAll('#col-selected .kanban-card').length;
+    }
+    
+    // Initial count
+    updateCounts();
+
+    let draggedCard = null;
+
+    cards.forEach(card => {
+        card.addEventListener('dragstart', () => {
+            draggedCard = card;
+            setTimeout(() => card.style.opacity = '0.5', 0);
+        });
+
+        card.addEventListener('dragend', () => {
+            draggedCard = null;
+            card.style.opacity = '1';
+        });
+    });
+
+    columns.forEach(column => {
+        column.addEventListener('dragover', e => {
+            e.preventDefault();
+            column.style.background = 'var(--bg-light)'; // Highlight drop zone
+        });
+        
+        column.addEventListener('dragleave', () => {
+            column.style.background = ''; // reset
+        });
+
+        column.addEventListener('drop', () => {
+            column.style.background = '';
+            if (draggedCard) {
+                column.appendChild(draggedCard);
+                updateCounts();
+                // To save status directly to DB:
+                const appId = draggedCard.getAttribute('data-app-id');
+                const newStatus = column.getAttribute('data-status');
+                fetch(`/update-application-status/${appId}/`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': getCookie('csrftoken'),
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({status: newStatus})
+                });
+            }
+        });
+    });
+</script>
+{% endblock %}

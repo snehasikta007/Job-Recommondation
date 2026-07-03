@@ -1,0 +1,100 @@
+body {
+    margin: 0;
+    font-family: Arial;
+    background:linear-gradient(120deg,#0b346c,#0ea5e9);
+    
+}
+
+/* Navbar */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    padding: 15px 60px;
+    background: white;
+}
+
+.logo {
+    font-size: 20px;
+    font-weight: bold;
+    color: #2563eb;
+}
+
+.navbar a {
+    text-decoration: none;
+    margin-left: 20px;
+    color: #333;
+}
+
+.navbar a:hover {
+    color: #2563eb;
+}
+
+/* Contact Box */
+.contact-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 90vh;
+}
+
+.contact-box {
+    background: white;
+    padding: 30px;
+    width: 400px;
+    border-radius: 10px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+}
+
+.contact-box h2 {
+    text-align: center;
+}
+
+.contact-box p {
+    text-align: center;
+    font-size: 14px;
+    color: #666;
+}
+
+/* Inputs */
+.input-group {
+    margin-top: 15px;
+}
+
+.input-group label {
+    font-size: 14px;
+}
+
+.input-group input,
+.input-group textarea {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+/* Buttons */
+.buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.cancel {
+    background: #ccc;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+}
+
+.send {
+    background: #2563eb;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+}
+
+.send:hover {
+    background: #1d4ed8;
+}

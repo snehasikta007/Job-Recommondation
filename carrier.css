@@ -1,0 +1,87 @@
+body{
+margin:0;
+font-family:Arial, Helvetica, sans-serif;
+background:linear-gradient(135deg,#1e293b,#0ea5e9);
+height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+}
+
+/* Card container */
+
+.career-container{
+
+background:white;
+padding:40px;
+border-radius:12px;
+width:900px;
+
+box-shadow:0 10px 25px rgba(0,0,0,0.25);
+
+}
+
+/* Title */
+
+.career-container h2{
+
+font-size:30px;
+margin-bottom:10px;
+
+}
+
+/* Subtitle */
+
+.career-container p{
+
+color:#6b7280;
+margin-bottom:25px;
+
+}
+
+/* Tabs */
+
+.tabs{
+
+display:flex;
+flex-wrap:wrap;
+gap:15px;
+
+}
+
+/* Button style */
+
+.tab-btn{
+
+padding:10px 20px;
+
+border-radius:25px;
+
+border:1px solid #d1d5db;
+
+background:white;
+
+cursor:pointer;
+
+font-size:14px;
+
+transition:0.3s;
+
+}
+
+/* Hover */
+
+.tab-btn:hover{
+
+background:#f1f5f9;
+
+}
+
+/* Active button */
+
+.tab-btn.active{
+
+background:#e2e8f0;
+font-weight:bold;
+
+}

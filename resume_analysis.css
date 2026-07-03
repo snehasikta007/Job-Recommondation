@@ -1,0 +1,66 @@
+.analysis-container{
+    width:800px;
+    background:white;
+    padding:30px;
+    border-radius:12px;
+    box-shadow:0 10px 25px rgba(0,0,0,0.3);
+    text-align:center;
+}
+
+.upload-box{
+    margin:20px 0;
+}
+
+.upload-box input{
+    margin:10px;
+}
+
+.upload-box button{
+    padding:10px 20px;
+    background:#0ea5e9;
+    border:none;
+    color:white;
+    border-radius:6px;
+    cursor:pointer;
+}
+
+.upload-box button:hover{
+    background:#0284c7;
+}
+
+.result-box{
+    display:none;
+    text-align:left;
+    margin-top:20px;
+}
+
+.progress{
+    background:#ddd;
+    border-radius:20px;
+    overflow:hidden;
+}
+
+.progress-bar{
+    height:20px;
+    width:0%;
+    background:#0ea5e9;
+    text-align:center;
+    color:white;
+    font-size:12px;
+}
+
+.section{
+    margin-top:20px;
+}
+
+#skills span, #missingSkills span{
+    display:inline-block;
+    background:#e0f2fe;
+    padding:6px 10px;
+    margin:5px;
+    border-radius:5px;
+}
+
+#missingSkills span{
+    background:#fee2e2;
+}

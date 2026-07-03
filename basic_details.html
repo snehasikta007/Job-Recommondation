@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Basic Details</title>
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="form-container">
+
+<h2>Basic Details</h2>
+
+<form id="basicForm">
+
+<div class="form-grid">
+
+<div class="input-group">
+<label>Full Name</label>
+<input type="text" placeholder="Enter your full name" required>
+</div>
+
+<div class="input-group">
+<label>Work Status</label>
+<select required>
+<option>Select Work Status</option>
+<option>Fresher</option>
+<option>Experienced</option>
+</select>
+</div>
+
+<div class="input-group">
+<label>Current Location</label>
+<input type="text" placeholder="Enter location">
+</div>
+
+<div class="input-group">
+<label>Country</label>
+<select>
+<option>India</option>
+<option>USA</option>
+</select>
+</div>
+
+<div class="input-group">
+<label>State</label>
+<select required>
+<option value="">Select State</option>
+<option>Odisha</option>
+<option>Karnataka</option>
+<option>Maharashtra</option>
+<option>Tamil Nadu</option>
+<option>Delhi</option>
+</select>
+</div>
+
+<div class="input-group">
+<label>Mobile Number</label>
+
+<div class="mobile-box">
+
+<span class="country-code">+91</span>
+
+<input type="tel"
+id="mobile"
+placeholder="Enter mobile number"
+maxlength="10"
+required>
+
+</div>
+
+</div>
+
+
+
+<div class="input-group">
+<label>Email Address</label>
+<input type="email" placeholder="Enter email">
+</div>
+
+<div class="input-group">
+<label>Availability to Join</label>
+<select>
+<option>Select Availability</option>
+<option>15 days or less</option>
+<option>1 Month</option>
+<option>2 Months</option>
+<option>3 Months</option>
+<option>More than 3 Months</option>
+</select>
+</div>
+
+</div>
+
+<div class="button-group">
+
+<button type="button" class="cancel-btn">Cancel</button>
+<button type="submit" class="save-btn">Save</button>
+
+</div>
+
+</form>
+
+</div>
+
+<script src="script.js"></script>
+
+</body>
+</html>

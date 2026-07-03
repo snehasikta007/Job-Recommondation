@@ -1,0 +1,205 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}AI Job Portal Dashboard{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'dashboard/base_style.css' %}?v=2.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    {% block extra_css %}{% endblock %}
+</head>
+<body class="{% block body_class %}{% endblock %}">
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">
+                <i class="fa-solid fa-bolt-lightning"></i>
+                <span class="logo-text">AI JOB PORTAL HUB</span>
+            </div>
+            <button class="toggle-btn" id="sidebarToggle"><i class="fa-solid fa-bars"></i></button>
+        </div>
+        
+        <nav class="sidebar-nav">
+            <ul>
+                <li class="nav-item {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
+                    <a href="{% url 'dashboard' %}"><i class="fa-solid fa-gauge-high"></i> <span>Dashboard</span></a>
+                </li>
+                <li class="nav-item {% if request.resolver_match.url_name == 'find_jobs' %}active{% endif %}">
+                    <a href="{% url 'find_jobs' %}"><i class="fa-solid fa-briefcase"></i> <span>Find Jobs</span></a>
+                </li>
+                <li class="nav-item {% if request.resolver_match.url_name == 'applications_tracker' %}active{% endif %}">
+                    <a href="{% url 'applications_tracker' %}"><i class="fa-solid fa-paper-plane"></i> <span>Applications</span></a>
+                </li>
+                <li class="nav-item {% if request.resolver_match.url_name == 'saved_jobs' %}active{% endif %}">
+                    <a href="{% url 'saved_jobs' %}"><i class="fa-solid fa-bookmark"></i> <span>Saved Jobs</span></a>
+                </li>
+                <li class="nav-item {% if request.resolver_match.url_name == 'resume_analysis' %}active{% endif %}">
+                    <a href="{% url 'resume_analysis' %}"><i class="fa-solid fa-file-invoice"></i> <span>Resume Analyzer</span></a>
+                </li>
+                <li class="nav-item {% if request.resolver_match.url_name == 'career_advice' %}active{% endif %}">
+                    <a href="{% url 'career_advice' %}"><i class="fa-solid fa-compass"></i> <span>Career Advice</span></a>
+                </li>
+            </ul>
+        </nav>
+
+        <div class="sidebar-footer">
+            <ul style="list-style:none; padding:0;">
+                {% if user.is_authenticated %}
+                <li class="nav-item {% if request.resolver_match.url_name == 'profile' %}active{% endif %}">
+                    <a href="{% url 'profile' %}"><i class="fa-solid fa-user"></i> <span>Profile</span></a>
+                </li>
+                <li class="nav-item {% if request.resolver_match.url_name == 'settings' %}active{% endif %}">
+                    <a href="{% url 'settings' %}"><i class="fa-solid fa-gear"></i> <span>Settings</span></a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'logout' %}"><i class="fa-solid fa-right-from-bracket"></i> <span>Logout</span></a>
+                </li>
+                {% else %}
+                <li class="nav-item">
+                    <a href="{% url 'login' %}"><i class="fa-solid fa-right-to-bracket"></i> <span>Sign In</span></a>
+                </li>
+                {% endif %}
+            </ul>
+        </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-wrapper">
+        <!-- Navbar -->
+        <header class="navbar">
+            <div class="nav-left">
+                <h2 class="page-title">{% block page_title %}Dashboard Overview{% endblock %}</h2>
+            </div>
+            
+            <div class="nav-right">
+                <div class="nav-action dark-mode-toggle" id="themeToggle" title="Toggle Theme">
+                    <i class="fa-solid fa-moon"></i>
+                </div>
+                
+                <div class="nav-action notification-bell" id="notificationBtn">
+                    <i class="fa-solid fa-bell"></i>
+                    <span class="badge">2</span>
+                    <!-- Dropdown -->
+                    <div class="notification-dropdown" id="notificationDropdown" style="display:none; position:absolute; top:50px; right:0; width:300px; background:var(--card-bg); border:1px solid var(--border-color); border-radius:12px; box-shadow:var(--shadow); z-index:1000; text-align:left;">
+                        <div style="padding:15px; border-bottom:1px solid var(--border-color); font-weight:600;">Notifications</div>
+                        <div style="max-height:300px; overflow-y:auto;">
+                            <div style="padding:15px; border-bottom:1px solid var(--border-color); cursor:pointer;">
+                                <p style="font-size:0.85rem; margin-bottom:5px;"><strong>New Match!</strong> Junior Python Dev at Techflow</p>
+                                <span style="font-size:0.75rem; color:var(--text-muted);">2 hours ago</span>
+                            </div>
+                            <div style="padding:15px; cursor:pointer;">
+                                <p style="font-size:0.85rem; margin-bottom:5px;">Application viewed by Creative Studio</p>
+                                <span style="font-size:0.75rem; color:var(--text-muted);">1 day ago</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                {% if user.is_authenticated %}
+                <a href="{% url 'profile' %}" class="user-dropdown" style="text-decoration: none; color: inherit;">
+                    <div class="user-meta">
+                        <span class="user-name">{{ profile.full_name|default:user.first_name|default:user.username }}</span>
+                        <span class="user-role">{{ profile.work_status|default:"Member" }}</span>
+                    </div>
+                    <div class="user-avatar" id="userMenuBtn">
+                        {% if profile.image %}
+                            <img src="{{ profile.image.url }}" alt="Avatar">
+                        {% else %}
+                            <span style="font-weight: bold; font-size: 1.2rem;">{{ user.first_name|first|default:user.username|first|upper }}</span>
+                        {% endif %}
+                    </div>
+                </a>
+                {% else %}
+                <div class="nav-actions">
+                    <a href="{% url 'login' %}" class="btn-signin" style="text-decoration: none; color: white; padding: 8px 16px; border: 1px solid rgba(255,255,255,0.3); border-radius: 8px; margin-right: 10px;">Sign In</a>
+                    <a href="{% url 'register' %}" class="btn-primary" style="text-decoration: none; color: white; padding: 8px 16px; background: linear-gradient(90deg, #7c3aed, #4f46e5); border-radius: 8px;">Get Started</a>
+                </div>
+                {% endif %}
+            </div>
+        </header>
+
+        <!-- Dynamic Content -->
+        <section class="content-body">
+            {% block content %}{% endblock %}
+        </section>
+        
+        <footer class="main-footer">
+            <p>&copy; 2026 AI Job Portal Hub. All rights reserved.</p>
+        </footer title>
+    </main>
+
+    <!-- AI Career Assistant Floating Widget -->
+    <div class="ai-assistant-widget" id="aiBotWidget" onclick="toggleChatbot()">
+        <i class="fa-solid fa-robot"></i>
+    </div>
+    
+    <!-- Chatbot Window Core HTML -->
+    <div class="chatbot-window" id="chatbotWindow" style="display:none; position:fixed; bottom:100px; right:30px; width:350px; background:var(--card-bg); border-radius:15px; box-shadow:var(--shadow); z-index:1002; overflow:hidden; border:1px solid var(--border-color);">
+        <div style="background:var(--primary-gradient); color:white; padding:15px; display:flex; justify-content:space-between; align-items:center;">
+            <h4 style="margin:0;"><i class="fa-solid fa-robot" style="margin-right:10px;"></i> AI Assistant</h4>
+            <i class="fa-solid fa-xmark" style="cursor:pointer;" onclick="toggleChatbot()"></i>
+        </div>
+        <div id="chatMessages" style="height:300px; padding:15px; overflow-y:auto; display:flex; flex-direction:column; gap:10px;">
+            <div class="bot-msg" style="background:#f1f5f9; padding:10px 15px; border-radius:15px 15px 15px 0; align-self:flex-start; max-width:85%; color: #1e293b;">
+                Hello! I'm your AI Career Assistant. How can I help you today?
+            </div>
+        </div>
+        <div style="padding:15px; border-top:1px solid var(--border-color); display:flex; gap:10px;">
+            <input type="text" id="chatInput" placeholder="Ask about jobs, skills..." style="flex:1; padding:10px; border:1px solid var(--border-color); border-radius:20px; outline:none; background:var(--bg-light); color:var(--text-main);">
+            <button onclick="sendChatMessage()" style="background:var(--primary-gradient); color:white; border:none; border-radius:50%; width:40px; height:40px; cursor:pointer;" class="btn-primary"><i class="fa-solid fa-paper-plane"></i></button>
+        </div>
+    </div>
+
+    <script>
+        function toggleChatbot() {
+            const chatWin = document.getElementById('chatbotWindow');
+            chatWin.style.display = chatWin.style.display === 'none' ? 'block' : 'none';
+        }
+        
+        // Notifications Toggle
+        document.getElementById('notificationBtn').addEventListener('click', function(e) {
+            const dropdown = document.getElementById('notificationDropdown');
+            dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
+            e.stopPropagation();
+        });
+        
+        document.addEventListener('click', function() {
+            document.getElementById('notificationDropdown').style.display = 'none';
+        });
+
+        function sendChatMessage() {
+            const input = document.getElementById('chatInput');
+            const msg = input.value.trim();
+            if(!msg) return;
+            
+            // Add user message
+            const chatMessages = document.getElementById('chatMessages');
+            chatMessages.innerHTML += `<div class="user-msg" style="background:var(--primary-gradient); color:white; padding:10px 15px; border-radius:15px 15px 0 15px; align-self:flex-end; max-width:85%;">${msg}</div>`;
+            input.value = '';
+            
+            // Fetch AI Response
+            chatMessages.innerHTML += `<div class="bot-msg typing" id="typingIndicator" style="background:#f1f5f9; padding:10px 15px; border-radius:15px 15px 15px 0; align-self:flex-start; color: #1e293b;">typing...</div>`;
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            
+            fetch(`/ai-chat/?query=${encodeURIComponent(msg)}`)
+                .then(res => res.json())
+                .then(data => {
+                    document.getElementById('typingIndicator').remove();
+                    chatMessages.innerHTML += `<div class="bot-msg" style="background:#f1f5f9; padding:10px 15px; border-radius:15px 15px 15px 0; align-self:flex-start; max-width:85%; color: #1e293b;">${data.response}</div>`;
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
+                });
+        }
+        
+        // Enter key to send
+        document.getElementById('chatInput').addEventListener('keypress', function(e){
+            if(e.key === 'Enter') sendChatMessage();
+        });
+    </script>
+
+    <script src="{% static 'dashboard/base_script.js' %}"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

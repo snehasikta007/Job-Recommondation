@@ -1,0 +1,484 @@
+{% extends 'dashboard/base_dashboard.html' %}
+{% load static %}
+
+{% block title %}Career Path Finder | AI Job Portal Hub{% endblock %}
+{% block page_title %}Career Path Finder{% endblock %}
+
+{% block body_class %}career-page{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Override dashboard defaults for full-screen cosmic effect */
+    .content-body {
+        padding: 0 !important;
+        background: #030712 !important;
+    }
+    .main-wrapper {
+        background: #030712 !important;
+    }
+    .navbar {
+        display: none !important; /* Hide default dashboard navbar */
+    }
+
+    /* Career Custom Nav */
+    .career-nav {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        padding: 1.5rem 4rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        z-index: 100;
+        background: linear-gradient(to bottom, rgba(3, 7, 18, 0.8), transparent);
+    }
+
+    .nav-brand-group {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .nav-brand-icon {
+        width: 45px;
+        height: 45px;
+        background: var(--primary-gradient);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.5rem;
+        box-shadow: 0 0 20px rgba(124, 58, 237, 0.4);
+    }
+
+    .nav-brand-text h2 {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: white;
+        margin: 0;
+        line-height: 1;
+    }
+
+    .nav-brand-text p {
+        font-size: 0.75rem;
+        color: rgba(255, 255, 255, 0.6);
+        margin: 0;
+    }
+
+    .nav-links {
+        display: flex;
+        gap: 2.5rem;
+        align-items: center;
+    }
+
+    .nav-links a {
+        color: rgba(255, 255, 255, 0.8);
+        text-decoration: none;
+        font-weight: 500;
+        font-size: 0.95rem;
+        transition: all 0.3s;
+    }
+
+    .nav-links a:hover, .nav-links a.active {
+        color: white;
+        text-shadow: 0 0 10px rgba(255,255,255,0.5);
+    }
+
+    .nav-user-action {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+
+    .nav-user-action:hover {
+        background: rgba(255, 255, 255, 0.2);
+        transform: scale(1.1);
+    }
+
+    @media (max-width: 1024px) {
+        .career-nav { padding: 1.5rem 2rem; }
+        .nav-links { gap: 1.5rem; }
+    }
+
+    @media (max-width: 768px) {
+        .nav-links { display: none; }
+    }
+    
+    :root {
+        --cosmic-bg: #030712;
+        --accent-purple: #8b5cf6;
+        --accent-blue: #3b82f6;
+        --glass-white: rgba(255, 255, 255, 0.05);
+        --glass-border: rgba(255, 255, 255, 0.1);
+    }
+
+    .career-hero {
+        position: relative;
+        width: 100%;
+        min-height: 85vh;
+        background: url('{% static "images/career_bg.png" %}') no-repeat center center;
+        background-size: cover;
+        padding: 4rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        overflow: hidden;
+        box-shadow: inset 0 0 100px rgba(0,0,0,0.8);
+    }
+
+    .hero-overlay {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(90deg, rgba(3,7,18,0.9) 0%, rgba(3,7,18,0.4) 50%, rgba(3,7,18,0) 100%);
+        z-index: 1;
+    }
+
+    .hero-content {
+        position: relative;
+        z-index: 2;
+        max-width: 600px;
+    }
+
+    .badge-path {
+        background: rgba(139, 92, 246, 0.2);
+        color: #c4b5fd;
+        padding: 6px 16px;
+        border-radius: 50px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        border: 1px solid rgba(139, 92, 246, 0.3);
+        display: inline-block;
+        margin-bottom: 2rem;
+    }
+
+    .hero-content h1 {
+        font-size: 4rem;
+        font-weight: 800;
+        line-height: 1.1;
+        margin-bottom: 1.5rem;
+        background: linear-gradient(to bottom, #ffffff 50%, #94a3b8 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .hero-content h1 span {
+        background: linear-gradient(to right, #8b5cf6, #3b82f6);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .hero-content p {
+        color: #94a3b8;
+        font-size: 1.1rem;
+        line-height: 1.6;
+        margin-bottom: 2.5rem;
+    }
+
+    .hero-actions {
+        display: flex;
+        gap: 1.5rem;
+        margin-bottom: 3rem;
+    }
+
+    .btn-cosmic {
+        background: linear-gradient(135deg, #8b5cf6, #3b82f6);
+        color: white;
+        padding: 14px 32px;
+        border-radius: 12px;
+        font-weight: 600;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        transition: all 0.3s;
+        box-shadow: 0 10px 20px rgba(139, 92, 246, 0.3);
+    }
+
+    .btn-cosmic:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 15px 30px rgba(139, 92, 246, 0.5);
+    }
+
+    .btn-outline-cosmic {
+        background: rgba(255,255,255,0.05);
+        color: white;
+        padding: 14px 32px;
+        border-radius: 12px;
+        font-weight: 600;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        border: 1px solid rgba(255,255,255,0.1);
+        transition: all 0.3s;
+    }
+
+    .btn-outline-cosmic:hover {
+        background: rgba(255,255,255,0.1);
+        border-color: rgba(255,255,255,0.2);
+    }
+
+    .features-grid {
+        display: flex;
+        gap: 2rem;
+    }
+
+    .feature-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        color: #94a3b8;
+        font-size: 0.85rem;
+    }
+
+    .feature-item i {
+        color: #8b5cf6;
+        font-size: 1.1rem;
+    }
+
+    /* Floating Labels */
+    .floating-label {
+        position: absolute;
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 10px 20px;
+        border-radius: 12px;
+        color: white;
+        font-size: 0.9rem;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        z-index: 2;
+        animation: float 4s ease-in-out infinite;
+    }
+
+    .label-1 { top: 20%; right: 30%; animation-delay: 0s; }
+    .label-2 { top: 40%; right: 40%; animation-delay: 1s; }
+    .label-3 { top: 45%; right: 10%; animation-delay: 2s; }
+    .label-4 { top: 65%; right: 15%; animation-delay: 3s; }
+
+    .floating-label:hover {
+        background: rgba(255, 255, 255, 0.1);
+        border-color: var(--accent-purple);
+        transform: translateY(-5px) scale(1.05);
+        box-shadow: 0 0 20px rgba(139, 92, 246, 0.4);
+    }
+
+    @keyframes float {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-15px); }
+    }
+
+    /* Bottom Section */
+    .streams-section {
+        padding: 4rem;
+        background: #030712;
+        border-top: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .streams-header {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        margin-bottom: 2rem;
+    }
+
+    .streams-header i {
+        color: #fbbf24;
+        font-size: 1.5rem;
+    }
+
+    .streams-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+    }
+
+    .stream-card {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        padding: 1.25rem;
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        transition: all 0.3s;
+        cursor: pointer;
+    }
+
+    .stream-card:hover {
+        background: rgba(255, 255, 255, 0.06);
+        transform: translateY(-3px);
+    }
+
+    .stream-icon {
+        width: 45px;
+        height: 45px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+    }
+
+    .stream-info h3 {
+        font-size: 0.95rem;
+        font-weight: 700;
+        margin-bottom: 2px;
+    }
+
+    .stream-info p {
+        font-size: 0.75rem;
+        color: #64748b;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<header class="career-nav">
+    <div class="nav-brand-group">
+        <div class="nav-brand-icon">
+            <i class="fa-solid fa-wand-magic-sparkles"></i>
+        </div>
+        <div class="nav-brand-text">
+            <h2>AI Job Portal</h2>
+            <p>Your Future, Our Guidance</p>
+        </div>
+    </div>
+
+    <nav class="nav-links">
+        <a href="{% url 'dashboard' %}">Home</a>
+        <a href="{% url 'find_jobs' %}">Explore</a>
+        <a href="#" class="active">Roadmaps</a>
+        <a href="#">Courses</a>
+        <a href="{% url 'resume_analysis' %}">AI Assistant</a>
+    </nav>
+
+    <div class="nav-user-action" onclick="window.location.href='{% url 'profile' %}'">
+        <i class="fa-solid fa-user"></i>
+    </div>
+</header>
+
+<div class="career-hero">
+    <div class="hero-overlay"></div>
+    
+    <!-- Floating Labels (Now Functional Links) -->
+    <a href="https://drive.google.com/file/d/1m1DTSXpPYeJ7RcNsTcatXlG3MlBboQPL/view?usp=sharing" class="floating-label label-1" style="text-decoration: none; cursor: pointer;">
+        <i class="fa-solid fa-code" style="color: #6366f1;"></i> Software Engineer
+    </a>
+    <a href="https://drive.google.com/file/d/1FXG7W_cmpij1jj01SXEzwTAjU-4_X8XC/view?usp=sharing" class="floating-label label-2" style="text-decoration: none; cursor: pointer;">
+        <i class="fa-solid fa-chart-line" style="color: #10b981;"></i> Data Analyst
+    </a>
+    <a href="https://drive.google.com/file/d/1b8tOwi6IwWhRKFHf9HQ7Z5__f_pAiHeW/view?usp=sharing" class="floating-label label-3" style="text-decoration: none; cursor: pointer;">
+        <i class="fa-solid fa-briefcase" style="color: #f59e0b;"></i> Product Manager
+    </a>
+    <a href="https://drive.google.com/file/d/1cee2cbGQpkahuGYN7msma7PHkr1GRuQf/view?usp=sharing" class="floating-label label-4" style="text-decoration: none; cursor: pointer;">
+        <i class="fa-solid fa-palette" style="color: #d946ef;"></i> UI/UX Designer
+    </a>
+
+    <div class="hero-content">
+        <span class="badge-path">Career Path Finder</span>
+        <h1>Discover Your <br><span>Perfect Career</span> Path</h1>
+        <p>Explore personalized career recommendations, roles, skills, and learning paths tailored just for you.</p>
+        
+        <div class="hero-actions">
+            <a href="{% url 'find_jobs' %}" class="btn-cosmic">
+                <i class="fa-solid fa-wand-magic-sparkles"></i> Start Exploring
+            </a>
+            <a href="#" class="btn-outline-cosmic">
+                <i class="fa-solid fa-file-lines"></i> Take Readiness Assessment
+            </a>
+        </div>
+
+        <div class="features-grid">
+            <div class="feature-item">
+                <i class="fa-solid fa-bolt"></i>
+                <div>
+                    <strong>AI-Powered</strong><br>Smart career matching
+                </div>
+            </div>
+            <div class="feature-item">
+                <i class="fa-solid fa-bullseye"></i>
+                <div>
+                    <strong>Personalized</strong><br>Tailored to your goals
+                </div>
+            </div>
+            <div class="feature-item">
+                <i class="fa-solid fa-rotate"></i>
+                <div>
+                    <strong>Up-to-Date</strong><br>Latest industry insights
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="streams-section">
+    <div class="streams-header">
+        <i class="fa-solid fa-star"></i>
+        <h2>Explore Popular Streams</h2>
+    </div>
+
+    <div class="streams-grid">
+        <a href="{% url 'find_jobs' %}?q=Engineering" class="stream-card" style="text-decoration: none; color: inherit;">
+            <div class="stream-icon" style="background: rgba(59, 130, 246, 0.1); color: #3b82f6;">
+                <i class="fa-solid fa-gears"></i>
+            </div>
+            <div class="stream-info">
+                <h3>Engineering</h3>
+                <p>B.Tech / B.E</p>
+            </div>
+        </a>
+        <a href="{% url 'find_jobs' %}?q=Computer" class="stream-card" style="text-decoration: none; color: inherit;">
+            <div class="stream-icon" style="background: rgba(139, 92, 246, 0.1); color: #8b5cf6;">
+                <i class="fa-solid fa-laptop-code"></i>
+            </div>
+            <div class="stream-info">
+                <h3>Computer Applications</h3>
+                <p>BCA / MCA</p>
+            </div>
+        </a>
+        <a href="{% url 'find_jobs' %}?q=Management" class="stream-card" style="text-decoration: none; color: inherit;">
+            <div class="stream-icon" style="background: rgba(245, 158, 11, 0.1); color: #f59e0b;">
+                <i class="fa-solid fa-user-tie"></i>
+            </div>
+            <div class="stream-info">
+                <h3>Business & Management</h3>
+                <p>BBA / MBA</p>
+            </div>
+        </a>
+        <a href="{% url 'find_jobs' %}?q=Commerce" class="stream-card" style="text-decoration: none; color: inherit;">
+            <div class="stream-icon" style="background: rgba(16, 185, 129, 0.1); color: #10b981;">
+                <i class="fa-solid fa-coins"></i>
+            </div>
+            <div class="stream-info">
+                <h3>Commerce</h3>
+                <p>B.Com</p>
+            </div>
+        </a>
+        <a href="{% url 'find_jobs' %}?q=Science" class="stream-card" style="text-decoration: none; color: inherit;">
+            <div class="stream-icon" style="background: rgba(6, 182, 212, 0.1); color: #06b6d4;">
+                <i class="fa-solid fa-flask"></i>
+            </div>
+            <div class="stream-info">
+                <h3>Science</h3>
+                <p>B.Sc</p>
+            </div>
+        </a>
+    </div>
+</div>
+{% endblock %}

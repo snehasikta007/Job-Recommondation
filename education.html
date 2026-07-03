@@ -1,0 +1,140 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Academic Records | AI Job Portal{% endblock %}
+
+{% block extra_css %}
+<style>
+    .edu-container {
+        max-width: 800px;
+        margin: 4rem auto;
+        padding: 0 1.5rem;
+    }
+    .form-card {
+        padding: 3rem;
+    }
+    .form-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem;
+    }
+    @media (max-width: 600px) {
+        .form-grid { grid-template-columns: 1fr; }
+    }
+    .input-group {
+        margin-bottom: 1.5rem;
+    }
+    .input-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        color: var(--text-dim);
+        font-size: 0.9rem;
+    }
+    select, input {
+        width: 100%;
+        padding: 1rem;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid var(--glass-border);
+        border-radius: 12px;
+        color: white;
+        transition: all 0.3s;
+    }
+    select option { background: var(--bg-dark); }
+    .btn-full {
+        width: 100%;
+        margin-top: 2rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="edu-container">
+    <div class="section-header" style="text-align: center; margin-bottom: 3rem;">
+        <span class="badge">Academic Path</span>
+        <h1>Education Portfolio</h1>
+        <p>Document your learning journey to refine AI role matching.</p>
+    </div>
+
+    <div class="glass-card form-card">
+        <form id="educationForm">
+            {% csrf_token %}
+            <div class="form-grid">
+                <div class="input-group">
+                    <label>Highest Qualification</label>
+                    <select name="qualification" required>
+                        <option value="">Select</option>
+                        <option value="Bachelor's Degree">Bachelor's Degree</option>
+                        <option value="Master's Degree">Master's Degree</option>
+                        <option value="Doctorate">Doctorate</option>
+                        <option value="Diploma">Diploma</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>Field of Study (Course)</label>
+                    <input type="text" name="course" placeholder="e.g. MCA / B.Tech / B.Sc" required>
+                </div>
+                <div class="input-group">
+                    <label>Specialization</label>
+                    <input type="text" name="specialization" placeholder="e.g. Computer Science / AI" required>
+                </div>
+                <div class="input-group">
+                    <label>Course Type</label>
+                    <select name="course_type" required>
+                        <option value="Regular">Regular</option>
+                        <option value="Part-time">Part-time</option>
+                        <option value="Distance">Distance</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>Institution Name</label>
+                    <input type="text" name="university" placeholder="University name" required>
+                </div>
+                <div class="input-group">
+                    <label>Start Year</label>
+                    <input type="number" name="starting_year" placeholder="2020" required>
+                </div>
+                <div class="input-group">
+                    <label>Completion Year</label>
+                    <input type="number" name="passing_year" placeholder="2024" required>
+                </div>
+                <div class="input-group">
+                    <label>Grading System</label>
+                    <select name="grading_system">
+                        <option value="Percentage">Percentage</option>
+                        <option value="CGPA">CGPA (10 pt)</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>Score (%) / CGPA</label>
+                    <input type="number" step="0.01" name="percentage" placeholder="e.g. 85 or 8.5" required>
+                </div>
+            </div>
+            
+            <button type="submit" class="btn-primary btn-full">Synchronize Records</button>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.getElementById('educationForm').onsubmit = async (e) => {
+        e.preventDefault();
+        const formData = new FormData(e.target);
+        
+        const response = await fetch('{% url "education" %}', {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}'
+            }
+        });
+
+        if (response.ok) {
+            window.location.href = '{% url "profile" %}';
+        } else {
+            alert('Failed to save records. Please check the data.');
+        }
+    };
+</script>
+{% endblock %}

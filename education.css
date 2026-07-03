@@ -1,0 +1,71 @@
+body{
+margin:0;
+font-family:Arial, Helvetica, sans-serif;
+background:linear-gradient(120deg,#1e293b,#0ea5e9);
+height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+}
+
+.container{
+width:100%;
+max-width:700px;
+}
+
+.education-box{
+background:white;
+padding:35px;
+border-radius:30px;
+box-shadow:0 10px 25px rgba(0,0,0,0.25);
+}
+
+.education-box h2{
+margin-bottom:5px;
+}
+
+.education-box p{
+color:gray;
+font-size:14px;
+margin-bottom:20px;
+}
+
+.input-group{
+margin-bottom:15px;
+display:flex;
+flex-direction:column;
+}
+
+.input-group label{
+font-size:14px;
+margin-bottom:5px;
+}
+
+.input-group input,
+.input-group select{
+padding:10px;
+border:1px solid #ccc;
+border-radius:6px;
+font-size:14px;
+}
+
+.row{
+display:flex;
+gap:15px;
+}
+
+.next-btn{
+width:100%;
+padding:12px;
+background:#0ea5e9;
+border:none;
+color:white;
+font-size:16px;
+border-radius:6px;
+cursor:pointer;
+margin-top:10px;
+}
+
+.next-btn:hover{
+background:#0284c7;
+}

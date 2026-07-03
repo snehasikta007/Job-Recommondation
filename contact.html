@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Contact Support | AI Job Portal{% endblock %}
+
+{% block extra_css %}
+<style>
+    .contact-container {
+        max-width: 900px;
+        margin: 4rem auto;
+        padding: 0 1.5rem;
+        display: grid;
+        grid-template-columns: 1.2fr 1fr;
+        gap: 2rem;
+    }
+    @media (max-width: 768px) { .contact-container { grid-template-columns: 1fr; } }
+    .contact-info {
+        padding: 3rem;
+    }
+    .info-item {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+    .info-item i { color: var(--primary); font-size: 1.2rem; margin-top: 0.3rem; }
+    .contact-form-card { padding: 3rem; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="contact-container">
+    <div class="glass-card contact-info">
+        <span class="badge">Get in Touch</span>
+        <h2>How can we help you?</h2>
+        <p style="color: var(--text-dim); margin-bottom: 2rem;">Whether you have a technical question or want to partner with us, our team is ready to assist.</p>
+        
+        <div class="info-item">
+            <i class="fa fa-envelope"></i>
+            <div>
+                <h4>Support Email</h4>
+                <p style="color: var(--text-dim);">support@aijobportal.com</p>
+            </div>
+        </div>
+        <div class="info-item">
+            <i class="fa fa-location-dot"></i>
+            <div>
+                <h4>Headquarters</h4>
+                <p style="color: var(--text-dim);">Innovation Hub, Bhubaneswar, Odisha</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="glass-card contact-form-card">
+        <h3>Send a Message</h3>
+        <form style="margin-top: 1.5rem;">
+            <div class="input-group" style="margin-bottom: 1rem;">
+                <input type="text" placeholder="Your Name" required>
+            </div>
+            <div class="input-group" style="margin-bottom: 1rem;">
+                <input type="email" placeholder="Your Email" required>
+            </div>
+            <div class="input-group" style="margin-bottom: 1rem;">
+                <textarea placeholder="How can we assist you?" style="min-height: 120px;"></textarea>
+            </div>
+            <button class="btn-primary" style="width: 100%;">Dispatch Message</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

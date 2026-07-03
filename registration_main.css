@@ -1,0 +1,123 @@
+body{
+margin:0;
+font-family:Arial;
+background:linear-gradient(135deg,#1e293b,#0ea5e9);
+height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+}
+
+.register-container{
+display:flex;
+width:900px;
+background:white;
+border-radius:10px;
+overflow:hidden;
+box-shadow:0 10px 25px rgba(0,0,0,0.3);
+}
+
+/* Left Section */
+
+.left-section{
+width:45%;
+background:#0ea5e9;
+color:white;
+padding:40px;
+display:flex;
+flex-direction:column;
+justify-content:center;
+}
+
+.left-section h1{
+margin-bottom:15px;
+}
+
+.left-section p{
+font-size:14px;
+line-height:1.6;
+}
+
+/* Right Section */
+
+.right-section{
+width:55%;
+padding:40px;
+}
+
+.right-section h2{
+margin-bottom:20px;
+}
+
+/* Input Fields */
+
+.input-box{
+display:flex;
+align-items:center;
+border:1px solid #ddd;
+padding:10px;
+border-radius:6px;
+margin-bottom:15px;
+}
+
+.input-box i{
+margin-right:10px;
+color:#0ea5e9;
+}
+
+.input-box input{
+border:none;
+outline:none;
+width:100%;
+font-size:14px;
+}
+
+/* Work Status */
+
+.status-box{
+display:flex;
+gap:15px;
+margin:15px 0;
+}
+
+.status-card{
+border:1px solid #ddd;
+padding:10px 15px;
+border-radius:6px;
+cursor:pointer;
+font-size:14px;
+}
+
+.status-card:hover{
+border-color:#0ea5e9;
+}
+
+/* Register Button */
+
+.register-btn{
+width:100%;
+padding:12px;
+background:#0ea5e9;
+border:none;
+color:white;
+font-size:16px;
+border-radius:6px;
+cursor:pointer;
+margin-top:10px;
+}
+
+.register-btn:hover{
+background:#0284c7;
+}
+
+/* Login Link */
+
+.login-link{
+margin-top:15px;
+font-size:14px;
+}
+
+.login-link a{
+color:#0ea5e9;
+text-decoration:none;
+}

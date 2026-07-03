@@ -1,0 +1,148 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Find Jobs | AI Job Portal{% endblock %}
+
+{% block content %}
+<section class="hero-screen">
+    <div class="hero-overlay"></div>
+    <div class="hero-content-center">
+        <h1 class="main-title">Find a job that suits your interests and skills</h1>
+        <h2 class="sub-title">1000+ Jobs on Jobsite</h2>
+        <p class="description">
+            Our AI analyzes your resume and recommends the best job opportunities based on your skills and experience.
+        </p>
+        <div class="action-wrap">
+            {% if not user.is_authenticated %}
+                <a href="{% url 'register' %}" class="btn-hero-primary">Get Started</a>
+            {% else %}
+                <a href="{% url 'dashboard' %}" class="btn-hero-primary">Go to Dashboard</a>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+<!-- Additional features section (optional, kept from previous iteration for quality) -->
+<section class="info-section">
+    <div class="card-row">
+        <div class="glass-card feature-mini">
+            <i class="fa fa-wand-magic-sparkles"></i>
+            <h4>AI Analysis</h4>
+            <p>Precise resume mapping</p>
+        </div>
+        <div class="glass-card feature-mini">
+            <i class="fa fa-bullseye"></i>
+            <h4>Targeted Roles</h4>
+            <p>Hand-picked for you</p>
+        </div>
+        <div class="glass-card feature-mini">
+            <i class="fa fa-road"></i>
+            <h4>Career Path</h4>
+            <p>Future-proof roadmap</p>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .hero-screen {
+        position: relative;
+        height: calc(100vh - 80px); /* Adjust for navbar height */
+        min-height: 600px;
+        background: url("{% static 'images/landing_hero_bg.png' %}") no-repeat center center;
+        background-size: cover;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        overflow: hidden;
+    }
+
+    .hero-overlay {
+        position: absolute;
+        top: 0; left: 0; width: 100%; height: 100%;
+        background: radial-gradient(circle, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.8) 100%);
+    }
+
+    .hero-content-center {
+        position: relative;
+        z-index: 10;
+        max-width: 900px;
+        padding: 0 2rem;
+    }
+
+    .main-title {
+        font-size: 3.5rem;
+        font-weight: 800;
+        color: white;
+        margin-bottom: 1rem;
+        line-height: 1.2;
+    }
+
+    .sub-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #4facfe; /* Light blue from screenshot */
+        margin-bottom: 2rem;
+    }
+
+    .description {
+        font-size: 1.25rem;
+        color: rgba(255, 255, 255, 0.9);
+        max-width: 800px;
+        margin: 0 auto 3rem;
+        line-height: 1.6;
+    }
+
+    .btn-hero-primary {
+        display: inline-block;
+        background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        color: #111;
+        padding: 1.2rem 3.5rem;
+        border-radius: 16px;
+        font-weight: 700;
+        font-size: 1.1rem;
+        text-decoration: none;
+        box-shadow: 0 10px 30px rgba(0, 242, 254, 0.3);
+        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .btn-hero-primary:hover {
+        transform: scale(1.05);
+        box-shadow: 0 15px 40px rgba(0, 242, 254, 0.5);
+    }
+
+    .info-section {
+        background: var(--bg-dark);
+        padding: 4rem 2rem;
+    }
+
+    .card-row {
+        display: flex;
+        justify-content: center;
+        gap: 2rem;
+        max-width: 1200px;
+        margin: 0 auto;
+        flex-wrap: wrap;
+    }
+
+    .feature-mini {
+        width: 250px;
+        padding: 2rem;
+        text-align: center;
+    }
+
+    .feature-mini i {
+        font-size: 2rem;
+        color: #4facfe;
+        margin-bottom: 1rem;
+    }
+
+    @media (max-width: 768px) {
+        .main-title { font-size: 2.5rem; }
+        .sub-title { font-size: 1.8rem; }
+        .description { font-size: 1.1rem; }
+    }
+</style>
+{% endblock %}

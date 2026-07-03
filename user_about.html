@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>All About You</title>
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="form-box">
+
+        <h2>All About You</h2>
+
+        <form id="aboutForm">
+
+            <!-- Full Name -->
+            <div class="input-group">
+                <label>Full Name</label>
+                <input type="text" placeholder="Enter your full name" required>
+            </div>
+
+            <!-- Gender -->
+            <div class="input-group">
+                <label>Gender</label>
+                <div class="gender">
+                    <label><input type="radio" name="gender"> Male</label>
+                    <label><input type="radio" name="gender"> Female</label>
+                    <label><input type="radio" name="gender"> Other</label>
+                </div>
+            </div>
+
+            <!-- Date of Birth -->
+            <div class="input-group">
+                <label>Date of Birth</label>
+                <div class="dob">
+                    <select>
+                        <option>Date</option>
+                        <script>
+                            for(let i=1;i<=31;i++){
+                                document.write("<option>"+i+"</option>");
+                            }
+                        </script>
+                    </select>
+
+                    <select>
+                        <option>Month</option>
+                        <option>Jan</option><option>Feb</option>
+                        <option>Mar</option><option>Apr</option>
+                        <option>May</option><option>Jun</option>
+                        <option>Jul</option><option>Aug</option>
+                        <option>Sep</option><option>Oct</option>
+                        <option>Nov</option><option>Dec</option>
+                    </select>
+
+                    <select>
+                        <option>Year</option>
+                        <script>
+                            for(let i=1990;i<=2025;i++){
+                                document.write("<option>"+i+"</option>");
+                            }
+                        </script>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Current Location -->
+            <div class="input-group">
+                <label>Current Location</label>
+                <input type="text" placeholder="Enter current location">
+            </div>
+
+            <!-- Home Town -->
+            <div class="input-group">
+                <label>Home Town</label>
+                <input type="text" placeholder="Enter home town">
+            </div>
+
+            <!-- Mobile Number -->
+            <div class="input-group">
+                <label>Mobile Number</label>
+                <input type="tel" placeholder="Enter mobile number" required>
+            </div>
+
+            <!-- Buttons -->
+            <div class="buttons">
+                <button type="reset" class="cancel">Cancel</button>
+                <button type="submit" class="save">Save</button>
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+<script src="script.js"></script>
+
+</body>
+</html>

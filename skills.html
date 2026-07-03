@@ -1,0 +1,50 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Skills & Resume | AI Job Recommendation</title>
+<link rel="stylesheet" href="{% static 'css/skills.css' %}">
+</head>
+
+<body>
+
+    <div class="container">
+
+        <div class="skills-box">
+            <h2>Skills & Resume Upload</h2>
+            <p>Add your skills and upload your resume</p>
+
+            <form id="skillsForm" method="POST">
+                {% csrf_token %}
+
+                <div class="input-group">
+                <label>Skills</label>
+                <input type="text" placeholder="Example: Java, Python, HTML, SQL etc" required>
+                </div>
+                
+                 <div class="input-group">
+                <label>Upload Profile Photo (jpg/jpeg)</label>
+                <input type="file" accept=".jpg,.jpeg" required>
+                </div>
+
+                <div class="input-group">
+                <label>Upload Resume (doc / docx / pdf / jpeg / jpg)</label>
+                <input type="file" accept=".doc,.docx,.pdf,.jpg,.jpeg" required>
+                </div>
+
+
+                <button type="submit" class="submit-btn">
+                Complete Registration
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+<script src="{% static 'js/skills.js' %}"></script>
+
+</body>
+</html>

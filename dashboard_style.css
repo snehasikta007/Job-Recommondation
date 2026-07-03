@@ -1,0 +1,230 @@
+.dashboard-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+}
+
+/* Stats Cards */
+.stats-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 24px;
+}
+
+.stat-card {
+    background: var(--card-bg);
+    padding: 24px;
+    border-radius: 16px;
+    border: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    position: relative;
+    overflow: hidden;
+    transition: var(--transition);
+}
+
+.stat-card:hover {
+    box-shadow: var(--shadow);
+    transform: translateY(-2px);
+}
+
+.stat-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+}
+
+.b-blue { background: #eff6ff; color: #3b82f6; }
+.b-purple { background: #f5f3ff; color: #8b5cf6; }
+.b-orange { background: #fff7ed; color: #f97316; }
+.b-cyan { background: #ecfeff; color: #06b6d4; }
+
+.stat-info h3 {
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+.stat-info p {
+    color: var(--text-muted);
+    font-size: 0.875rem;
+}
+
+.stat-progress {
+    height: 4px;
+    background: #e2e8f0;
+    border-radius: 2px;
+}
+
+.stat-progress .progress-bar {
+    height: 100%;
+    background: #3b82f6;
+    border-radius: 2px;
+}
+
+/* Layout Columns */
+.main-layout {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 24px;
+}
+
+.section-card {
+    background: var(--card-bg);
+    padding: 24px;
+    border-radius: 16px;
+    border: 1px solid var(--border-color);
+    margin-bottom: 24px;
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.section-header h2 {
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.view-all {
+    color: #4f46e5;
+    text-decoration: none;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+/* Job Cards */
+.job-card {
+    display: flex;
+    gap: 20px;
+    padding: 20px;
+    border-radius: 12px;
+    background: #f8fafc;
+    margin-bottom: 15px;
+    transition: var(--transition);
+}
+
+[data-theme="dark"] .job-card { background: #1e293b; }
+
+.job-card:hover {
+    background: #f1f5f9;
+}
+
+.job-company-logo {
+    width: 48px;
+    height: 48px;
+    background: var(--primary-gradient);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 700;
+    font-size: 20px;
+}
+
+.job-details { flex: 1; }
+
+.job-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 5px;
+}
+
+.match-badge {
+    background: #dcfce7;
+    color: #166534;
+    padding: 2px 10px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.company-name {
+    font-size: 0.875rem;
+    color: var(--text-muted);
+}
+
+.why-msg {
+    margin: 10px 0;
+    font-size: 0.85rem;
+    color: #4f46e5;
+    background: #eef2ff;
+    padding: 8px 12px;
+    border-radius: 8px;
+}
+
+.job-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 15px;
+}
+
+.salary { font-weight: 600; font-size: 0.95rem; }
+
+.btn-primary {
+    background: #4f46e5;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+}
+
+.btn-outline {
+    background: transparent;
+    border: 1px solid var(--border-color);
+    padding: 8px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    color: var(--text-muted);
+}
+
+/* Checklist */
+.checklist {
+    list-style: none;
+    margin-top: 15px;
+}
+
+.checklist li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 0;
+    color: var(--text-muted);
+}
+
+.checklist li.done { color: #10b981; }
+.checklist li.done i { color: #10b981; }
+
+/* Kanban Mini */
+.kanban-mini {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 15px;
+}
+
+.kanban-col {
+    background: #f1f5f9;
+    padding: 15px;
+    border-radius: 12px;
+    text-align: center;
+}
+
+[data-theme="dark"] .kanban-col { background: #334155; }
+
+.kanban-col h4 { font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted); }
+.kanban-col .count { font-size: 1.5rem; font-weight: 700; margin-top: 5px; }
+
+/* Responsive */
+@media (max-width: 1100px) {
+    .main-layout { grid-template-columns: 1fr; }
+}

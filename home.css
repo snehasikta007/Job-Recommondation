@@ -1,0 +1,128 @@
+body{
+
+margin:0;
+font-family:Arial, Helvetica, sans-serif;
+
+}
+
+/* Navbar */
+
+.navbar{
+
+display:flex;
+justify-content:space-between;
+align-items:center;
+background:#0d6efd;
+color:white;
+padding:15px 50px;
+
+}
+
+.navbar ul{
+
+display:flex;
+list-style:none;
+
+}
+
+.navbar li{
+
+margin-left:20px;
+
+}
+
+.navbar a{
+
+color:white;
+text-decoration:none;
+
+}
+
+/* Hero */
+
+.hero{
+
+height:400px;
+display:flex;
+justify-content:center;
+align-items:center;
+background:linear-gradient(to right,#0d6efd,#4facfe);
+color:white;
+text-align:center;
+
+}
+
+.hero button{
+
+padding:12px 25px;
+background:white;
+border:none;
+color:#0d6efd;
+font-size:16px;
+cursor:pointer;
+border-radius:5px;
+
+}
+
+/* Features */
+
+.features{
+
+padding:60px;
+text-align:center;
+
+}
+
+.feature-container{
+
+display:flex;
+justify-content:center;
+gap:30px;
+
+}
+
+.feature-card{
+
+background:#f4f4f4;
+padding:25px;
+border-radius:10px;
+width:220px;
+
+}
+
+/* Upload Section */
+
+.upload-section{
+
+text-align:center;
+padding:60px;
+background:#f8f8f8;
+
+}
+
+.upload-section input{
+
+padding:10px;
+
+}
+
+.upload-section button{
+
+padding:12px 25px;
+background:#198754;
+border:none;
+color:white;
+border-radius:5px;
+
+}
+
+/* Footer */
+
+footer{
+
+background:#222;
+color:white;
+text-align:center;
+padding:20px;
+
+}

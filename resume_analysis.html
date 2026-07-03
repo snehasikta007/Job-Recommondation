@@ -1,0 +1,255 @@
+{% extends 'dashboard/base_dashboard.html' %}
+{% load static %}
+
+{% block title %}AI Resume Analysis | AI Job Portal Hub{% endblock %}
+{% block page_title %}Resume Analyzer{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/resume_analysis.css' %}">
+<style>
+    .analysis-container {
+        max-width: 900px;
+        margin: 2rem auto;
+        padding: 2rem;
+        background: white;
+        border-radius: 24px;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        color: #1e293b; /* Explicit dark text */
+    }
+    .analysis-header {
+        text-align: center;
+        margin-bottom: 3rem;
+    }
+    .analysis-header h1 {
+        font-size: 3rem;
+        margin-bottom: 0.5rem;
+        color: #1e1b4b; /* Deep Indigo */
+        font-weight: 800;
+    }
+    .analysis-header p {
+        color: #64748b;
+        font-size: 1.1rem;
+    }
+    .upload-box {
+        background: #f8fafc;
+        border: 2px dashed #cbd5e1;
+        padding: 3rem 2rem;
+        border-radius: 20px;
+        text-align: center;
+        transition: all 0.3s;
+        cursor: pointer;
+        color: #475569;
+    }
+    .upload-box:hover {
+        border-color: var(--primary);
+        background: #f1f5f9;
+    }
+    .upload-box i {
+        font-size: 2.5rem;
+        color: var(--primary);
+        margin-bottom: 1rem;
+    }
+    .result-section {
+        margin-top: 3rem;
+        display: none;
+    }
+    .glass-card {
+        background: white;
+        border: 1px solid #e2e8f0;
+        padding: 1.5rem;
+        border-radius: 16px;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+    .glass-card h3 {
+        color: #1e293b;
+        font-weight: 700;
+        margin-bottom: 1rem;
+    }
+    .match-score-large {
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: var(--primary);
+    }
+    .skill-pills {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        margin-top: 1rem;
+    }
+    .skill-pill {
+        background: #f1f5f9;
+        border: 1px solid #e2e8f0;
+        padding: 0.5rem 1rem;
+        border-radius: 50px;
+        font-size: 0.9rem;
+        color: #334155;
+        font-weight: 600;
+    }
+    .skill-pill.missing {
+        border-color: #fecdd3;
+        background: #fff1f2;
+        color: #e11d48;
+    }
+    .suggestion-item {
+        background: #f8fafc;
+        padding: 1.25rem;
+        border-radius: 12px;
+        margin-bottom: 0.75rem;
+        border-left: 4px solid var(--secondary);
+        color: #334155;
+        font-size: 0.95rem;
+        line-height: 1.5;
+    }
+    .badge {
+        background: #ede9fe;
+        color: #7c3aed;
+        padding: 0.4rem 1rem;
+        border-radius: 50px;
+        font-weight: 700;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        margin-bottom: 1rem;
+        display: inline-block;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="analysis-container">
+    <div class="analysis-header">
+        <span class="badge">AI Powered</span>
+        <h1>Resume Insight</h1>
+        <p>Our neural engine analyzes your career trajectory and identifies opportunities.</p>
+    </div>
+
+    <div class="upload-box" id="dropZone" onclick="document.getElementById('resumeFile').click()">
+        <i class="fa fa-cloud-upload-alt"></i>
+        <h3>Select Your Resume</h3>
+        <p>PDF format recommended for best analysis</p>
+        <input type="file" id="resumeFile" hidden onchange="handleFileSelect(this)">
+        <div id="fileInfo" style="margin-top: 1rem; color: var(--primary-light); font-weight: 600;"></div>
+        <button class="btn-primary" style="margin-top: 1.5rem;" onclick="event.stopPropagation(); analyzeResume()">Begin Analysis</button>
+    </div>
+
+    <div id="loading" style="display: none; text-align: center; margin-top: 3rem;">
+        <div class="spinner"></div>
+        <p style="margin-top: 1rem; color: var(--text-dim);">AI is processing your professional DNA...</p>
+    </div>
+
+    <div class="result-section" id="resultBox" style="display:none;">
+        <div class="glass-card" style="margin-bottom: 2rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <h3>Analysis Summary</h3>
+                <div class="match-score-large" id="scoreText">--%</div>
+            </div>
+        </div>
+
+        <div class="glass-card">
+                <h3><i class="fa fa-check-circle" style="color: var(--secondary);"></i> Detected Strengths</h3>
+                <div class="skill-pills" id="skills"></div>
+            </div>
+
+        <div class="glass-card" style="margin-top: 2rem;">
+            <h3><i class="fa fa-lightbulb" style="color: var(--primary-light);"></i> Career Growth Roadmaps</h3>
+            <div id="suggestions" style="margin-top: 1.5rem;"></div>
+        </div>
+        
+        <div style="text-align: center; margin-top: 3rem;">
+            <a href="{% url 'dashboard' %}" class="btn-primary">Go to Dashboard</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function handleFileSelect(input) {
+        const fileInfo = document.getElementById('fileInfo');
+        if (input.files.length > 0) {
+            fileInfo.textContent = `Selected: ${input.files[0].name}`;
+        }
+    }
+
+    async function analyzeResume() {
+        const fileInput = document.getElementById('resumeFile');
+        if (fileInput.files.length === 0) {
+            alert('Please select a file first.');
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('resume', fileInput.files[0]);
+
+        document.getElementById('loading').style.display = 'block';
+        document.getElementById('resultBox').style.display = 'none';
+        document.getElementById('dropZone').style.opacity = '0.5';
+
+        try {
+            const response = await fetch('{% url "resume_analysis" %}', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}'
+                }
+            });
+
+            const data = await response.json();
+            
+            if (response.ok) {
+                displayResults(data);
+            } else {
+                alert(data.error || 'Analysis failed');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('An unexpected error occurred.');
+        } finally {
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('dropZone').style.opacity = '1';
+        }
+    }
+
+    function displayResults(data) {
+        document.getElementById('resultBox').style.display = 'block';
+        
+        // Skills
+        const skillsDiv = document.getElementById('skills');
+        skillsDiv.innerHTML = '';
+        data.extracted_skills.forEach(skill => {
+            const span = document.createElement('span');
+            span.className = 'skill-pill';
+            span.textContent = skill;
+            skillsDiv.appendChild(span);
+        });
+
+
+
+        // Suggestions
+        const suggDiv = document.getElementById('suggestions');
+        suggDiv.innerHTML = '';
+        data.suggestions.forEach(s => {
+            const div = document.createElement('div');
+            div.className = 'suggestion-item';
+            div.textContent = s;
+            suggDiv.appendChild(div);
+        });
+
+        // ── Overall Score: average of all job match scores ──
+        let score = 70; // fallback
+        if (data.jobs && data.jobs.length > 0) {
+            const total = data.jobs.reduce((sum, job) => sum + (job.match_score || 0), 0);
+            score = Math.round(total / data.jobs.length);
+        } else if (data.overall_score) {
+            score = data.overall_score;
+        }
+        const scoreEl = document.getElementById('scoreText');
+        scoreEl.textContent = `${score}%`;
+        // Color the score based on value
+        if (score >= 80) scoreEl.style.color = 'var(--secondary, #10b981)';
+        else if (score >= 60) scoreEl.style.color = 'var(--primary-light, #7c3aed)';
+        else scoreEl.style.color = '#f59e0b';
+        
+        window.scrollTo({ top: document.getElementById('resultBox').offsetTop - 100, behavior: 'smooth' });
+    }
+</script>
+{% endblock %}

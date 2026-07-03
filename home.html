@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}AI Job Recommendation System - Find Your Best Career{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/home.css' %}">
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero">
+    <div class="hero-content-wrapper">
+        <div class="hero-text">
+            <h1 class="animate-up">Find the Best Career <br><span class="gradient-text">Using AI Intelligence</span></h1>
+            <p class="animate-up delay-1">
+                Upload your resume and our advanced AI system will dissect your skills, 
+                recommending the perfect jobs and mapping your career trajectory.
+            </p>
+            <div class="hero-btns animate-up delay-2">
+                <a href="{% url 'register' %}" class="btn-primary btn-lg">Get Started Free</a>
+                <a href="#features" class="btn-secondary">Explore Features <i class="fa fa-arrow-right"></i></a>
+            </div>
+        </div>
+        <div class="hero-visual animate-fade">
+            <div class="floating-card">
+                <i class="fa fa-robot"></i>
+                <span>AI Analysis Active</span>
+            </div>
+            <div class="floating-card delay-v">
+                <i class="fa fa-briefcase"></i>
+                <span>Matches Found</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features -->
+<section id="features" class="features">
+    <div class="section-header">
+        <span class="badge">Innovation</span>
+        <h2>Powerful AI Features</h2>
+    </div>
+    <div class="feature-grid">
+        <div class="feature-card glass-card">
+            <div class="icon-blob"><i class="fa fa-file-invoice"></i></div>
+            <h3>AI Resume Analysis</h3>
+            <p>Our deep learning models extract hidden skills and analyze your professional narrative.</p>
+        </div>
+        <div class="feature-card glass-card">
+            <div class="icon-blob secondary"><i class="fa fa-bullseye"></i></div>
+            <h3>Precision Matching</h3>
+            <p>Get job recommendations with high matching scores based on real market data.</p>
+        </div>
+        <div class="feature-card glass-card">
+            <div class="icon-blob accent"><i class="fa fa-code-merge"></i></div>
+            <h3>Skill Gap Detection</h3>
+            <p>Identify missing skills required for your dream roles and get learning resources.</p>
+        </div>
+    </div>
+</section>
+
+<!-- Resume Upload -->
+<section id="upload" class="upload-section">
+    <div class="glass-container">
+        <h2>Ready to transform your career?</h2>
+        <p>Join thousands of professionals using AI to find their next big move.</p>
+        <form id="resumeForm" class="upload-box">
+            <i class="fa fa-cloud-upload-alt"></i>
+            <h3>Upload PDF Resume</h3>
+            <p>Drag & drop or click to browse</p>
+            <input type="file" id="resumeFile" hidden required>
+            <button type="button" onclick="document.getElementById('resumeFile').click()" class="btn-primary">Choose File</button>
+        </form>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/home.js' %}"></script>
+{% endblock %}

@@ -1,0 +1,666 @@
+{% extends 'dashboard/base_dashboard.html' %}
+{% load static %}
+
+{% block title %}My Profile | AI Job Portal Hub{% endblock %}
+{% block page_title %}Profile Settings{% endblock %}
+
+{% block body_class %}cosmic-profile{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/profile.css' %}?v=2.0">
+{% endblock %}
+
+{% block content %}
+
+<!-- ===== COSMIC PROFILE GRID ===== -->
+<div class="cosmic-container">
+    
+    <!-- Profile Form Wrapper (for inline edits, though forms are also in modals) -->
+    <!-- Autofill banner from original for functional completeness -->
+    <div class="autofill-banner">
+        <div class="banner-text">
+            <h3><i class="fa fa-wand-magic-sparkles"></i> AI Resume Auto-Fill</h3>
+            <p>Upload your PDF to magically populate your skills, experience, and education.</p>
+        </div>
+        <div class="banner-actions-wrapper">
+            <div class="banner-actions">
+                <input type="file" id="autofill-resume-input" accept=".pdf" hidden>
+                <label for="autofill-resume-input" class="btn-select-pdf">
+                    <i class="fa fa-file-pdf"></i> Select PDF
+                </label>
+                <button id="autofill-btn" onclick="runAutoFill()" disabled class="btn-autofill">
+                    <i class="fa fa-bolt"></i> Auto-fill
+                </button>
+            </div>
+            <span id="file-name-display" style="display: none;"></span>
+        </div>
+    </div>
+    
+    <div class="cosmic-grid">
+        
+        <!-- COLUMN 1: Identity, Contact, Experience, Resume -->
+        <div class="cosmic-col left-col">
+            
+            <!-- Hero Card -->
+            <div class="glass-panel">
+                <form method="POST" enctype="multipart/form-data" id="heroForm">
+                    {% csrf_token %}
+                    <div class="hero-identity">
+                        <div class="hero-avatar">
+                            <img src="{% if profile.image %}{{ profile.image.url }}{% else %}https://api.dicebear.com/7.x/avataaars/svg?seed={{ user.username }}{% endif %}" alt="Profile Photo" id="profilePreview">
+                            <label for="imageUpload" class="add-photo-btn"><i class="fa fa-plus"></i></label>
+                            <input type="file" id="imageUpload" name="image" hidden>
+                        </div>
+                        <div class="hero-info">
+                            <h1>{{ user.first_name|default:user.username }}</h1>
+                            <p>{{ profile.bio|default:"No bio added yet. Edit your profile to add one." }}</p>
+                            <div class="hero-links">
+                                <span><i class="fa fa-location-dot"></i> {{ profile.location|default:"Location not set" }}</span>
+                                <span><i class="fa fa-envelope"></i> {{ user.email }}</span>
+                                {% if profile.portfolio %}<span><i class="fa fa-link"></i> {{ profile.portfolio }}</span>{% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Contact Info -->
+            <div class="glass-panel">
+                <h3>Contact Info</h3>
+                <div class="contact-list">
+                    <div class="contact-item">
+                        <i class="fa fa-location-dot"></i>
+                        {{ profile.location|default:"Location not set" }}
+                    </div>
+                    <div class="contact-item">
+                        <i class="fa fa-envelope"></i>
+                        {{ user.email }}
+                    </div>
+                    <div class="contact-item">
+                        <i class="fa fa-phone"></i>
+                        {{ profile.phone|default:"Phone not set" }}
+                    </div>
+
+                    <!-- GitHub -->
+                    <div class="contact-item" style="justify-content:space-between; align-items:center;">
+                        <div style="display:flex; align-items:center; gap:10px;">
+                            <i class="fab fa-github" style="color:#fff; font-size:1rem;"></i>
+                            {% if profile.github %}
+                                <a href="{{ profile.github }}" target="_blank"
+                                   style="color:#e2e8f0; text-decoration:none; font-size:0.9rem;"
+                                   onmouseover="this.style.color='#a78bfa'" onmouseout="this.style.color='#e2e8f0'">
+                                    GitHub Profile <i class="fa fa-arrow-up-right-from-square" style="font-size:0.7rem; margin-left:4px;"></i>
+                                </a>
+                            {% else %}
+                                <span style="color:#64748b; font-size:0.85rem; font-style:italic;">GitHub not added</span>
+                            {% endif %}
+                        </div>
+                        <button onclick="showModal('editProfileModal')" title="Edit GitHub URL"
+                            style="background:rgba(255,255,255,0.1); border:none; border-radius:6px; padding:4px 8px; cursor:pointer; color:#94a3b8;">
+                            <i class="fa fa-pen" style="font-size:0.75rem;"></i>
+                        </button>
+                    </div>
+
+                    <!-- LinkedIn -->
+                    <div class="contact-item" style="justify-content:space-between; align-items:center;">
+                        <div style="display:flex; align-items:center; gap:10px;">
+                            <i class="fab fa-linkedin" style="color:#0ea5e9; font-size:1rem;"></i>
+                            {% if profile.linkedin %}
+                                <a href="{{ profile.linkedin }}" target="_blank"
+                                   style="color:#e2e8f0; text-decoration:none; font-size:0.9rem;"
+                                   onmouseover="this.style.color='#38bdf8'" onmouseout="this.style.color='#e2e8f0'">
+                                    LinkedIn Profile <i class="fa fa-arrow-up-right-from-square" style="font-size:0.7rem; margin-left:4px;"></i>
+                                </a>
+                            {% else %}
+                                <span style="color:#64748b; font-size:0.85rem; font-style:italic;">LinkedIn not added</span>
+                            {% endif %}
+                        </div>
+                        <button onclick="showModal('editProfileModal')" title="Edit LinkedIn URL"
+                            style="background:rgba(255,255,255,0.1); border:none; border-radius:6px; padding:4px 8px; cursor:pointer; color:#94a3b8;">
+                            <i class="fa fa-pen" style="font-size:0.75rem;"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Edit Profile Button -->
+                <button class="btn-gold" onclick="showModal('editProfileModal')">Edit Profile</button>
+            </div>
+
+            <!-- Experience -->
+            <div class="glass-panel">
+                <h3><i class="fa fa-bars st"></i> Experience <button class="btn-icon" onclick="showModal('workModal')"><i class="fa fa-plus"></i></button></h3>
+                <div class="exp-list">
+                    {% for work in experience %}
+                    <div class="exp-item">
+                        <div style="display:flex; justify-content:space-between;">
+                            <h4>{{ work.role }}</h4>
+                            <button class="btn-edit-item" 
+                                onclick="openEditModal('workModal', 'experience', {{ work.id }}, {role: '{{ work.role|escapejs }}', company: '{{ work.company|escapejs }}', duration: '{{ work.duration|escapejs }}', description: '{{ work.description|escapejs }}'})">
+                                <i class="fa fa-pen"></i>
+                            </button>
+                        </div>
+                        <h5>{{ work.company }}</h5>
+                        <p>{{ work.duration }}</p>
+                    </div>
+                    {% empty %}
+                    <div class="exp-item">
+                        <h4>No Experience Added</h4>
+                        <p>Upload your resume to add work experience.</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Resume Download -->
+            <div class="glass-panel download-panel">
+                <div class="download-header">Download Resume</div>
+                <button class="btn-outline-glow"><i class="fa fa-download"></i> Download Resume</button>
+            </div>
+
+        </div>
+
+        <!-- COLUMN 2: Completion, Skills, Resume Info -->
+        <div class="cosmic-col mid-col">
+
+            <!-- Profile Completion -->
+            <div class="glass-panel">
+                <div class="completion-wrapper">
+                    <!-- Setting the inline var --pct to control the conic gradient -->
+                    <div class="completion-ring" style="--pct: 80%;">
+                        <div class="completion-value">80<span>%</span></div>
+                    </div>
+                    <div class="comp-stats">
+                        <div class="comp-title">Profile Completion</div>
+                        <div class="progress-line">
+                            <div class="progress-line-fill" style="--pct: 80%;"></div>
+                        </div>
+                        <div class="comp-icons">
+                            <div><i class="fa fa-circle-check" style="color:#10b981;"></i> Profile Details</div>
+                            <div><i class="fa fa-circle-check" style="color:#10b981;"></i> Locations</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- My Skills -->
+            <div class="glass-panel">
+                <h3><i class="fa fa-star st"></i> My Skills <button class="btn-icon" onclick="showModal('skillModal')"><i class="fa fa-plus"></i></button></h3>
+                <div class="skills-masonry">
+                    {% for user_skill in user_skills %}
+                        <div class="skill-pill">
+                            <span class="name">{{ user_skill.skill.name }}</span>
+                            <div class="stars">
+                                {% for i in "12345" %}
+                                    {% if forloop.counter <= user_skill.rating %}
+                                        <i class="fa fa-star"></i>
+                                    {% else %}
+                                        <i class="fa fa-star dim"></i>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                            <button class="btn-edit-small" 
+                                onclick="openEditModal('skillModal', 'skill', {{ user_skill.id }}, {skill_name: '{{ user_skill.skill.name|escapejs }}', proficiency: '{{ user_skill.proficiency|escapejs }}', rating: {{ user_skill.rating }}})">
+                                <i class="fa fa-pen"></i>
+                            </button>
+                        </div>
+                    {% empty %}
+                        <!-- Placeholder Mockup Skills -->
+                        <div class="skill-pill"><span class="name">JAVA</span><div class="stars"><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star dim"></i><i class="fa fa-star dim"></i></div></div>
+                        <div class="skill-pill"><span class="name">HTML</span><div class="stars"><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star dim"></i></div></div>
+                        <div class="skill-pill"><span class="name">CSS</span><div class="stars"><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i></div></div>
+                        <div class="skill-pill"><span class="name">SQL</span><div class="stars"><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star dim"></i><i class="fa fa-star dim"></i></div></div>
+                        <div class="skill-pill"><span class="name">CSL</span><div class="stars"><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i></div></div>
+                        <div class="skill-pill"><span class="name">JavaScript</span><div class="stars"><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star dim"></i></div></div>
+                        <div class="skill-pill"><span class="name">GitHub</span><div class="stars"><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i></div></div>
+                        <div class="skill-pill"><span class="name">Python</span><div class="stars"><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star dim"></i></div></div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Certifications Panel -->
+            <div class="glass-panel">
+                <h3><i class="fa fa-certificate"></i> Certifications <button class="btn-icon" onclick="showModal('certModal')"><i class="fa fa-plus"></i></button></h3>
+                {% for cert in certifications %}
+                <div class="icon-list-item">
+                    <i class="fa fa-check-square status-icon blue"></i>
+                    <div class="icon-list-content">
+                        <strong>{{ cert.name }}</strong>
+                        <span>{{ cert.platform }}</span>
+                    </div>
+                    <button class="btn-edit-item" 
+                        onclick="openEditModal('certModal', 'certification', {{ cert.id }}, {name: '{{ cert.name|escapejs }}', platform: '{{ cert.platform|escapejs }}', url: '{{ cert.url|escapejs }}'})">
+                        <i class="fa fa-pen"></i>
+                    </button>
+                </div>
+                {% empty %}
+                <div class="icon-list-item">
+                    <i class="fa fa-info-circle status-icon blue"></i>
+                    <div class="icon-list-content">
+                        <strong>No Certifications</strong>
+                        <span>Upload your resume or add them.</span>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+        </div>
+
+        <!-- COLUMN 3: Preferences, Education, Projects -->
+        <div class="cosmic-col right-col">
+
+            <!-- Job Preferences -->
+            <div class="glass-panel">
+                <h3>Job Preferences <button class="btn-icon" onclick="showModal('editPreferencesModal')"><i class="fa fa-pen"></i></button></h3>
+                <div class="icon-list-item">
+                    <i class="fa fa-briefcase status-icon"></i>
+                    <div class="icon-list-content">
+                        <strong>Job Title</strong>
+                        <span>{{ profile.job_title|default:"Not specified" }}</span>
+                    </div>
+                </div>
+                <div class="icon-list-item">
+                    <i class="fa fa-check status-icon"></i>
+                    <div class="icon-list-content">
+                        <strong>Desired Job Role</strong>
+                        <span>{{ profile.preferred_job_type|default:"Not specified" }}</span>
+                    </div>
+                </div>
+                <div class="icon-list-item">
+                    <i class="fa fa-location-arrow status-icon"></i>
+                    <div class="icon-list-content">
+                        <strong>Location</strong>
+                        <span>{{ profile.preferred_location|default:"Not specified" }}</span>
+                    </div>
+                </div>
+                <div class="icon-list-item">
+                    <i class="fa fa-indian-rupee-sign status-icon"></i>
+                    <div class="icon-list-content">
+                        <strong>Expected Salary</strong>
+                        <span>{{ profile.expected_salary|default:"Not specified" }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Education -->
+            <div class="glass-panel">
+                <h3><i class="fa fa-bars"></i> Education <button class="btn-icon" onclick="showModal('eduModal')"><i class="fa fa-plus"></i></button></h3>
+                {% for edu in education %}
+                <div class="icon-list-item">
+                    <i class="fa fa-check-square status-icon"></i>
+                    <div class="icon-list-content">
+                        <strong>{{ edu.qualification }} - {{ edu.course }}</strong>
+                        <span>{{ edu.university }} | {{ edu.starting_year }} - {{ edu.passing_year }}</span>
+                    </div>
+                    <button class="btn-edit-item" 
+                        onclick="openEditModal('eduModal', 'education', {{ edu.id }}, {qualification: '{{ edu.qualification|escapejs }}', course: '{{ edu.course|escapejs }}', university: '{{ edu.university|escapejs }}', starting_year: {{ edu.starting_year }}, passing_year: {{ edu.passing_year }}})">
+                        <i class="fa fa-pen"></i>
+                    </button>
+                </div>
+                {% empty %}
+                <div class="icon-list-item">
+                    <i class="fa fa-info-circle status-icon"></i>
+                    <div class="icon-list-content">
+                        <strong>No Education Added</strong>
+                        <span>Upload your resume to seamlessly extract your background.</span>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- Projects -->
+            <div class="glass-panel">
+                <h3><i class="fa fa-bars"></i> Projects <button class="btn-icon" onclick="showModal('projectModal')"><i class="fa fa-plus"></i></button></h3>
+                {% for project in projects %}
+                <div class="icon-list-item">
+                    <i class="fa fa-check-square status-icon purple"></i>
+                    <div class="icon-list-content">
+                        <strong>{{ project.title }}</strong>
+                        <span>{{ project.tech_stack }}</span>
+                    </div>
+                    <button class="btn-edit-item" 
+                        onclick="openEditModal('projectModal', 'project', {{ project.id }}, {title: '{{ project.title|escapejs }}', tech_stack: '{{ project.tech_stack|escapejs }}', link: '{{ project.link|escapejs }}', description: '{{ project.description|escapejs }}'})">
+                        <i class="fa fa-pen"></i>
+                    </button>
+                </div>
+                {% empty %}
+                <div class="icon-list-item">
+                    <i class="fa fa-info-circle status-icon purple"></i>
+                    <div class="icon-list-content">
+                        <strong>No Projects Added</strong>
+                        <span>Showcase your work automatically via your uploaded resume.</span>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- ===== MODALS (Data Input) ===== -->
+
+<!-- Edit Job Preferences Modal -->
+<div id="editPreferencesModal" class="modal-overlay">
+    <div class="modal-card">
+        <h3>Edit Job Preferences</h3>
+        <form action="{% url 'profile' %}" method="POST">
+            {% csrf_token %}
+            <div class="input-group">
+                <label>Job Title</label>
+                <input type="text" name="job_title" value="{{ profile.job_title }}" placeholder="e.g. Software Engineer">
+            </div>
+            <div class="input-group">
+                <label>Desired Job Role (Type)</label>
+                <input type="text" name="preferred_job_type" value="{{ profile.preferred_job_type }}" placeholder="e.g. Full-time, Internship">
+            </div>
+            <div class="input-group">
+                <label>Preferred Location</label>
+                <input type="text" name="preferred_location" value="{{ profile.preferred_location }}" placeholder="e.g. Bangalore, Remote">
+            </div>
+            <div class="input-group">
+                <label>Availability</label>
+                <input type="text" name="availability" value="{{ profile.availability }}" placeholder="e.g. Immediate, 30 Days">
+            </div>
+            <div class="input-group">
+                <label>Expected Salary</label>
+                <input type="text" name="expected_salary" value="{{ profile.expected_salary }}" placeholder="e.g. ₹5,00,000">
+            </div>
+            <div class="modal-btns">
+                <button type="button" class="btn-ghost" onclick="closeModal('editPreferencesModal')">Cancel</button>
+                <button type="submit" class="btn-primary">Save Preferences</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Edit Profile Info Modal -->
+<div id="editProfileModal" class="modal-overlay">
+    <div class="modal-card">
+        <h3><i class="fa fa-pen" style="color:#7c3aed; margin-right:8px;"></i>Edit Personal Info</h3>
+        <form action="{% url 'profile' %}" method="POST">
+            {% csrf_token %}
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+                <input type="text" name="first_name" value="{{ user.first_name }}" placeholder="First Name">
+                <input type="text" name="last_name" value="{{ user.last_name }}" placeholder="Last Name">
+            </div>
+            <input type="text" name="phone" value="{{ profile.phone }}" placeholder="Phone Number">
+            <input type="text" name="location" value="{{ profile.location }}" placeholder="Location (e.g. Bhubaneswar, India)">
+
+            <!-- GitHub -->
+            <div style="position:relative;">
+                <i class="fab fa-github" style="position:absolute; left:12px; top:50%; transform:translateY(-50%); color:#333; font-size:1rem;"></i>
+                <input type="url" name="github" value="{{ profile.github }}" placeholder="GitHub URL (https://github.com/...)" style="padding-left:38px;">
+            </div>
+
+            <!-- LinkedIn -->
+            <div style="position:relative;">
+                <i class="fab fa-linkedin" style="position:absolute; left:12px; top:50%; transform:translateY(-50%); color:#0077b5; font-size:1rem;"></i>
+                <input type="url" name="linkedin" value="{{ profile.linkedin }}" placeholder="LinkedIn URL (https://linkedin.com/in/...)" style="padding-left:38px;">
+            </div>
+
+            <textarea name="bio" placeholder="Quick bio/summary...">{{ profile.bio }}</textarea>
+            <div class="modal-btns">
+                <button type="button" class="btn-ghost" onclick="closeModal('editProfileModal')">Cancel</button>
+                <button type="submit" class="btn-primary">Save Changes</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div id="skillModal" class="modal-overlay">
+    <div class="modal-card">
+        <h3>Add New Skill</h3>
+        <form id="skillForm">
+            {% csrf_token %}
+            <input type="hidden" name="instance_id" id="skill_id">
+            <input type="text" name="skill_name" placeholder="E.g. Python, UX Design" required>
+            <select name="proficiency">
+                <option value="Beginner">Beginner</option>
+                <option value="Intermediate">Intermediate</option>
+                <option value="Expert">Expert</option>
+            </select>
+            <input type="number" name="rating" min="1" max="5" value="3" placeholder="Rating 1-5 (stars)">
+            <div class="modal-btns">
+                <button type="button" class="btn-delete-modal" id="deleteSkillBtn" style="display:none; margin-right:auto;">Delete</button>
+                <button type="button" class="btn-ghost" onclick="closeModal('skillModal')">Cancel</button>
+                <button type="submit" class="btn-primary">Save Skill</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div id="workModal" class="modal-overlay">
+    <div class="modal-card">
+        <h3>Add Work Experience</h3>
+        <form id="workForm">
+            {% csrf_token %}
+            <input type="hidden" name="instance_id" id="work_id">
+            <input type="text" name="company" placeholder="Company Name" required>
+            <input type="text" name="role" placeholder="Job Role / Title" required>
+            <input type="text" name="duration" placeholder="Duration (e.g. Jan 2023 – Present)" required>
+            <textarea name="description" placeholder="Brief description of duties..."></textarea>
+            <div class="modal-btns">
+                <button type="button" class="btn-delete-modal" id="deleteExperienceBtn" style="display:none; margin-right:auto;">Delete</button>
+                <button type="button" class="btn-ghost" onclick="closeModal('workModal')">Cancel</button>
+                <button type="submit" class="btn-primary">Save Experience</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div id="projectModal" class="modal-overlay">
+    <div class="modal-card">
+        <h3>Add New Project</h3>
+        <form id="projectForm">
+            {% csrf_token %}
+            <input type="hidden" name="instance_id" id="project_id">
+            <input type="text" name="title" placeholder="Project Title" required>
+            <input type="text" name="tech_stack" placeholder="Tech Stack">
+            <input type="url" name="link" placeholder="Project URL (Optional)">
+            <textarea name="description" placeholder="What did you build?"></textarea>
+            <div class="modal-btns">
+                <button type="button" class="btn-delete-modal" id="deleteProjectBtn" style="display:none; margin-right:auto;">Delete</button>
+                <button type="button" class="btn-ghost" onclick="closeModal('projectModal')">Cancel</button>
+                <button type="submit" class="btn-primary">Save Project</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div id="eduModal" class="modal-overlay">
+    <div class="modal-card">
+        <h3>Add Education</h3>
+        <form action="{% url 'education' %}" method="POST" id="eduForm">
+            {% csrf_token %}
+            <input type="hidden" name="instance_id" id="edu_id">
+            <input type="text" name="qualification" placeholder="Degree (e.g. B.Tech)" required>
+            <input type="text" name="course" placeholder="Course Selection" required>
+            <input type="hidden" name="course_type" value="Regular">
+            <input type="hidden" name="specialization" value="N/A">
+            <input type="text" name="university" placeholder="Institution Name" required>
+            <input type="number" name="starting_year" placeholder="Start Year">
+            <input type="number" name="passing_year" placeholder="Grad Year" required>
+            <input type="hidden" name="grading_system" value="Percentage">
+            <input type="hidden" name="percentage" value="0.0">
+            <div class="modal-btns">
+                <button type="button" class="btn-delete-modal" id="deleteEducationBtn" style="display:none; margin-right:auto;">Delete</button>
+                <button type="button" class="btn-ghost" onclick="closeModal('eduModal')">Cancel</button>
+                <button type="submit" class="btn-primary">Save Education</button>
+            </div>
+        </form>
+    </div>
+</div>
+<div id="certModal" class="modal-overlay">
+    <div class="modal-card">
+        <h3>Add Certification</h3>
+        <form id="certForm">
+            {% csrf_token %}
+            <input type="hidden" name="instance_id" id="cert_id">
+            <input type="text" name="name" placeholder="Certification Name" required>
+            <input type="text" name="platform" placeholder="Issuing Organization" required>
+            <input type="url" name="url" placeholder="Certificate URL (Optional)">
+            <div class="modal-btns">
+                <button type="button" class="btn-delete-modal" id="deleteCertificationBtn" style="display:none; margin-right:auto;">Delete</button>
+                <button type="button" class="btn-ghost" onclick="closeModal('certModal')">Cancel</button>
+                <button type="submit" class="btn-primary">Save Certification</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // ===== Modal Logic =====
+    function showModal(id) { document.getElementById(id).style.display = 'flex'; }
+    function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+    window.onclick = function(e) {
+        if (e.target.classList.contains('modal-overlay')) e.target.style.display = 'none';
+    };
+
+    // Auto-save portrait image upload immediately 
+    const imgUpload = document.getElementById('imageUpload');
+    if (imgUpload) {
+        imgUpload.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(evt) { document.getElementById('profilePreview').src = evt.target.result; };
+                reader.readAsDataURL(file);
+                document.getElementById('heroForm').submit();
+            }
+        });
+    }
+
+    // ===== Minimal Autofill Logic Preserved =====
+    const autofillInput = document.getElementById('autofill-resume-input');
+    const autofillBtn = document.getElementById('autofill-btn');
+    const fileNameDisplay = document.getElementById('file-name-display');
+
+    if(autofillInput) {
+        autofillInput.addEventListener('change', function() {
+            if (this.files.length > 0) {
+                const fileName = this.files[0].name;
+                fileNameDisplay.innerText = "Selected: " + fileName;
+                fileNameDisplay.style.display = 'block';
+                
+                autofillBtn.disabled = false;
+                autofillBtn.classList.add('ready'); // Optional: Add a class for styling
+            } else {
+                fileNameDisplay.style.display = 'none';
+                autofillBtn.disabled = true;
+            }
+        });
+    }
+
+    async function runAutoFill() {
+        const file = autofillInput.files[0];
+        if (!file) return;
+        autofillBtn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Processing...';
+        autofillBtn.disabled = true;
+
+        try {
+            const formData = new FormData();
+            formData.append('resume', file);
+            const response = await fetch('{% url "extract_profile" %}', {
+                method: 'POST',
+                body: formData,
+                headers: { 'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value }
+            });
+            const data = await response.json();
+            
+            if (response.ok) {
+                autofillBtn.innerHTML = '<i class="fa fa-check"></i> Success!';
+                autofillBtn.style.background = 'linear-gradient(135deg, #10b981, #059669)';
+                setTimeout(() => location.reload(), 1000);
+            } else {
+                console.warn('AI Error:', data.error);
+                autofillBtn.innerHTML = '<i class="fa fa-exclamation-triangle"></i> Try Again';
+                autofillBtn.style.background = 'linear-gradient(135deg, #f59e0b, #d97706)';
+                alert(data.error || 'Autofill failed.');
+                autofillBtn.disabled = false;
+            }
+        } catch (e) {
+            console.error('Network Error:', e);
+            autofillBtn.innerHTML = '<i class="fa fa-wifi"></i> Network Error';
+            autofillBtn.disabled = false;
+        }
+    }
+
+    // Modal API forms
+    function handleAjaxForm(formId, url) {
+        const form = document.getElementById(formId);
+        if(!form) return;
+        form.onsubmit = async (e) => {
+            e.preventDefault();
+            const formData = new FormData(form);
+            const btn = form.querySelector('button[type="submit"]');
+            btn.disabled = true;
+            btn.textContent = 'Saving...';
+            const response = await fetch(url, {
+                method: 'POST',
+                body: formData,
+                headers: { 'X-CSRFToken': formData.get('csrfmiddlewaretoken') }
+            });
+            if (response.ok) location.reload();
+            else { alert('Error saving data.'); btn.disabled = false; btn.textContent = 'Save'; }
+        };
+    }
+    
+    handleAjaxForm('skillForm',   '{% url "add_skill" %}');
+    handleAjaxForm('workForm',    '{% url "add_experience" %}');
+    handleAjaxForm('projectForm', '{% url "add_project" %}');
+    handleAjaxForm('certForm',    '{% url "add_certification" %}');
+    handleAjaxForm('eduForm',     '{% url "education" %}');
+
+    async function deleteItem(type, id) {
+        if (!confirm(`Are you sure you want to delete this ${type}?`)) return;
+        const response = await fetch(`/profile/delete-${type}/${id}/`, {
+            method: 'POST',
+            headers: { 'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value }
+        });
+        if (response.ok) location.reload();
+        else alert('Error deleting item.');
+    }
+
+    function openEditModal(modalId, type, id, data) {
+        const modal = document.getElementById(modalId);
+        const form = modal.querySelector('form');
+        
+        // Reset form first
+        form.reset();
+        
+        // Populate fields
+        for (const key in data) {
+            const input = form.querySelector(`[name="${key}"]`);
+            if (input) input.value = data[key];
+        }
+        
+        // Set instance_id
+        const instanceInput = form.querySelector('[name="instance_id"]');
+        if (instanceInput) instanceInput.value = id;
+        
+        // Show delete button
+        const delBtn = modal.querySelector('.btn-delete-modal');
+        if (delBtn) {
+            delBtn.style.display = 'block';
+            delBtn.onclick = () => deleteItem(type, id);
+        }
+        
+        showModal(modalId);
+    }
+    
+    // Ensure "Add" buttons hide the delete button
+    document.querySelectorAll('.btn-icon').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const modalId = btn.getAttribute('onclick').match(/'([^']+)'/)[1];
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                const delBtn = modal.querySelector('.btn-delete-modal');
+                if (delBtn) delBtn.style.display = 'none';
+            }
+        });
+    });
+</script>
+{% endblock %}

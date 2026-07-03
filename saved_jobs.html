@@ -1,0 +1,203 @@
+{% extends 'dashboard/base_dashboard.html' %}
+{% load static %}
+
+{% block title %}Saved Jobs | AI Job Portal Hub{% endblock %}
+{% block page_title %}Saved Jobs{% endblock %}
+
+{% block extra_css %}
+<style>
+    .jobs-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+        gap: 1.5rem;
+        padding: 1rem;
+    }
+    .job-card {
+        background: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 16px;
+        padding: 1.5rem;
+        transition: transform 0.3s, box-shadow 0.3s;
+        position: relative;
+    }
+    .job-card:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--shadow);
+    }
+    .job-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 1rem;
+    }
+    .job-title {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: var(--text-main);
+        margin-bottom: 0.25rem;
+    }
+    .company-name {
+        font-size: 0.9rem;
+        color: var(--primary);
+        font-weight: 600;
+    }
+    .job-meta {
+        display: flex;
+        gap: 1rem;
+        font-size: 0.8rem;
+        color: var(--text-muted);
+        margin-bottom: 1rem;
+    }
+    .job-meta span {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+    .job-actions {
+        display: flex;
+        gap: 10px;
+        margin-top: 1rem;
+    }
+    .btn-apply {
+        flex: 1;
+        background: var(--primary-gradient);
+        color: white;
+        border: none;
+        padding: 0.7rem;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        text-align: center;
+        text-decoration: none;
+    }
+    .btn-remove {
+        padding: 0.7rem 1rem;
+        background: rgba(239, 68, 68, 0.1);
+        color: #f87171;
+        border: 1px solid rgba(239, 68, 68, 0.2);
+        border-radius: 8px;
+        cursor: pointer;
+    }
+    .empty-state {
+        text-align: center;
+        padding: 4rem 2rem;
+        background: var(--card-bg);
+        border-radius: 20px;
+        border: 1px dashed var(--border-color);
+        grid-column: 1 / -1;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="jobs-grid">
+    {% if has_saved_jobs %}
+        {# Display Jobs from the Jobs App #}
+        {% for saved in jobs_saved %}
+        <div class="job-card" id="job-main-{{ saved.job.id }}">
+            <div class="job-header">
+                <div>
+                    <div class="job-title">{{ saved.job.title }}</div>
+                    <div class="company-name">{{ saved.job.company }}</div>
+                </div>
+                <button class="btn-remove" onclick="toggleSaveMain({{ saved.job.id }})" title="Remove from saved">
+                    <i class="fa-solid fa-trash-can"></i>
+                </button>
+            </div>
+            
+            <div class="job-meta">
+                <span><i class="fa-solid fa-location-dot"></i> {{ saved.job.location }}</span>
+                <span><i class="fa-solid fa-clock"></i> Saved {{ saved.saved_at|timesince }} ago</span>
+            </div>
+            
+            <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 1rem;">
+                {{ saved.job.description|truncatewords:20 }}
+            </p>
+            
+            <div class="job-actions">
+                <a href="#" class="btn-apply" onclick="applyJob({{ saved.job.id }})">Apply Now</a>
+            </div>
+        </div>
+        {% endfor %}
+
+        {# Display Jobs from the Core App #}
+        {% for saved in core_saved %}
+        <div class="job-card" id="job-core-{{ saved.job.id }}">
+            <div class="job-header">
+                <div>
+                    <div class="job-title">{{ saved.job.job_title }} (AI Rec)</div>
+                    <div class="company-name">{{ saved.job.company }}</div>
+                </div>
+                <button class="btn-remove" onclick="toggleSaveCore({{ saved.job.id }})" title="Remove from saved">
+                    <i class="fa-solid fa-trash-can"></i>
+                </button>
+            </div>
+            
+            <div class="job-meta">
+                <span><i class="fa-solid fa-location-dot"></i> Remote / India</span>
+                <span><i class="fa-solid fa-clock"></i> Saved {{ saved.saved_at|timesince }} ago</span>
+            </div>
+            
+            <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 1rem;">
+                {{ saved.job.description|truncatewords:20 }}
+            </p>
+            
+            <div class="job-actions">
+                <a href="#" class="btn-apply" onclick="applyJob({{ saved.job.id }})">Apply Now</a>
+            </div>
+        </div>
+        {% endfor %}
+
+    {% else %}
+        <div class="empty-state">
+            <i class="fa-solid fa-bookmark" style="font-size: 3rem; color: var(--border-color); margin-bottom: 1rem;"></i>
+            <h3>No saved jobs yet</h3>
+            <p style="color: var(--text-muted);">Explore recommended jobs and save them to revisit later.</p>
+            <a href="{% url 'dashboard' %}" class="btn-primary" style="display:inline-block; margin-top:1.5rem; text-decoration:none; padding: 10px 20px; border-radius: 10px; color:white;">Go to Dashboard</a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function toggleSaveCore(jobId) {
+    fetch(`/core/toggle-save/${jobId}/`, {
+        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+    })
+    .then(res => res.json())
+    .then(data => {
+        if(data.action === 'removed') {
+            const card = document.getElementById(`job-core-${jobId}`);
+            removeCard(card);
+        }
+    });
+}
+
+function toggleSaveMain(jobId) {
+    fetch(`/save-job/${jobId}/`)
+    .then(res => res.json())
+    .then(data => {
+        if(data.job_status === 'removed') {
+            const card = document.getElementById(`job-main-${jobId}`);
+            removeCard(card);
+        }
+    });
+}
+
+function removeCard(card) {
+    card.style.opacity = '0';
+    card.style.transform = 'scale(0.9)';
+    setTimeout(() => {
+        card.remove();
+        if(document.querySelectorAll('.job-card').length === 0) {
+            location.reload(); 
+        }
+    }, 300);
+}
+
+function applyJob(jobId) {
+    alert("Application submitted successfully!");
+}
+</script>
+{% endblock %}
